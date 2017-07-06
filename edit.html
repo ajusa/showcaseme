@@ -10,25 +10,23 @@
 
 <body>
     <header class="navbar ph4 pv3 bg-near-white">
-        <section class="navbar-section">
-            <a href="home.html" class="b f3 tracked mr4">ShowcaseMe</a>
+        <section class="fl">
+            <a href="home.html" class="b btn btn-link tracked">ShowcaseMe</a>
             <a href="#" class="btn btn-link">Updates</a>
             <a href="#" class="btn btn-link">About</a>
         </section>
-        <section class="navbar-center">
-            <div class="popover popover-bottom">
-                <figure class="avatar" data-initial="AJ" style="background-color: #5764c6;"></figure>
+        <section class="fr">
+            <div class="popover popover-bottom mr2">
+                <figure class="avatar bg-blue" data-initial="AJ"></figure>
                 <div class="popover-container">
-                    <ul class="menu">
+                    <ul class="menu mw3">
                         <li class="menu-item b"><a href="#">Edit Profile</a></li>
                         <li class="menu-item"><a href="#">Notifications</a></li>
                         <li class="menu-item"><a href="#">Settings</a></li>
                     </ul>
                 </div>
             </div>
-        </section>
-        <section class="navbar-section">
-            <a href="home.html" class="btn btn-link">Sign Out</a>
+            <a href="#" class="btn btn-link">Sign Out</a>
         </section>
     </header>
     <div class="container mt4">
@@ -36,56 +34,40 @@
         <div class="row cf">
             <div class="six columns">
                 <h4 class="pt1 mt2 mb1">Personal Information</h4>
-                <div class="form-group">
-                    <label class="form-label">Name</label>
-                    <input class="form-input" type="text" placeholder="Name" value="Arham Jain" />
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input class="form-input" type="text" placeholder="Email" value="arhamjain@gmail.com" />
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Phone Number (just the number, no dashes)</label>
-                    <input class="form-input" type="number" placeholder="Phone Number" value="5175678866" />
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Gender</label>
-                    <label class="form-radio">
-                        <input type="radio" name="gender" checked />
-                        <i class="form-icon"></i> Male
-                    </label>
-                    <label class="form-radio">
-                        <input type="radio" name="gender" />
-                        <i class="form-icon"></i> Female
-                    </label>
-                    <label class="form-radio">
-                        <input type="radio" name="gender" />
-                        <i class="form-icon"></i> Other
-                    </label>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">About You</label>
-                    <textarea class="form-input" placeholder="Tell us about yourself" rows="3"></textarea>
-                </div>
+                <label class="mt3 fw4">Name</label>
+                <input type="text" placeholder="Name" value="Arham Jain" />
+                <label class="mt3 fw4">Email</label>
+                <input type="text" placeholder="Email" value="arhamjain@gmail.com" />
+                <label class="mt3 fw4">Phone Number (just the number, no dashes)</label>
+                <input type="number" placeholder="Phone Number" value="5175678866" />
+                <label class="mt3 fw4">Gender</label>
+                <label class="fw4">
+                    <input type="radio" name="gender" checked />
+                    <i class="form-icon"></i> Male
+                </label>
+                <label class="fw4">
+                    <input type="radio" name="gender" />
+                    <i class="form-icon"></i> Female
+                </label>
+                <label class="fw4">
+                    <input type="radio" name="gender" />
+                    <i class="form-icon"></i> Other
+                </label>
+                <label class="mt3 fw4">About You</label>
+                <textarea placeholder="Tell us about yourself" rows="3"></textarea>
             </div>
             <div class="six columns">
                 <h4 class="pt1 mt2 mb1">Resume</h4>
-                <div class="form-group">
-                    <label class="form-label">Experience</label>
-                    <textarea class="form-input" placeholder="Enter your experience" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Awards</label>
-                    <textarea class="form-input" placeholder="Enter a list of your awards" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Education</label>
-                    <textarea class="form-input" placeholder="Enter a schools and academic information" rows="3"></textarea>
-                </div>
+                <label class="mt3 fw4">Experience</label>
+                <textarea placeholder="Enter your experience" rows="3"></textarea>
+                <label class="mt3 fw4">Awards</label>
+                <textarea placeholder="Enter a list of your awards" rows="3"></textarea>
+                <label class="mt3 fw4">Education</label>
+                <textarea placeholder="Enter a schools and academic information" rows="3"></textarea>
             </div>
         </div>
         <div class="row mt3">
-            <button class="btn btn-primary btn-lg grow">Save Profile</button>
+            <button class="btn-primary grow">Save Profile</button>
         </div>
     </div>
 </body>

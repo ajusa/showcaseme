@@ -1,0 +1,89 @@
+ [% include 'head.html' %]
+<div class="container mt4">
+    <div class="row mt4 pt4">
+        <div class="siema pb2">
+            <div class="bg-blue vh-50 white tc">
+                <div class="vc">
+                    <h3 class="pt4 b">REVOLUTIONARY</h3>
+                    <p class="f5">ShowcaseMe is a place for students to find internships, in Okemos</p>
+                </div>
+            </div>
+            <div class="bg-green vh-50 white tc">
+                <div class="vc">
+                    <h3 class="pt4 b">REVOLUTIONARY</h3>
+                    <p class="f5">ShowcaseMe is a place for students to find internships, in Okemos</p>
+                </div>
+            </div>
+            <div class="bg-purple vh-50 white tc">
+                <div class="vc">
+                    <h3 class="pt4 b">REVOLUTIONARY</h3>
+                    <p class="f5">ShowcaseMe is a place for students to find internships, in Okemos</p>
+                </div>
+            </div>
+            <div class="bg-red vh-50 white tc">
+                <div class="vc">
+                    <h3 class="pt4 b">REVOLUTIONARY</h3>
+                    <p class="f5">ShowcaseMe is a place for students to find internships, in Okemos</p>
+                </div>
+            </div>
+        </div>
+        <div class="cf ba bw1 b-light-gray mb4">
+            <button class="btn btn-link btn-lg fl" id="left"><i class="icon icon-arrow-left"></i></button>
+            <button class="btn btn-link btn-lg fr" id="right"><i class="icon icon-arrow-right"></i></button>
+        </div>
+        <h3 class="mt4 pt4">Search for internships near you...</h3>
+        <div class="mb3 pb3">
+            <input class="mv2 f4" type="text" placeholder="web designer" />
+            <button class="btn-lg btn-primary mw4 w-100 mt2">Search</button>
+        </div>
+        <h3 class="mt3 pt3">Or, browse our new internships:</h3>
+        <div class="row cf">
+            <div class="four columns mv3">
+                <div class="card">
+                    <div class="p3">
+                        <h4 class="mb1">Microsoft</h4>
+                        <p class="silver">Web Dev</p>
+                        <p class="blokk">Empower every person and every organization on the planet to achieve more.</p>
+                        <button class="btn btn-primary">View Details</button>
+                    </div>
+                </div>
+            </div>
+            <div class="four columns mv3">
+                <div class="card">
+                    <div class="p3">
+                        <h4 class="mb1">Delta Dental</h4>
+                        <p class="silver">Java Dev</p>
+                        <p class="blokk">Empower every person and every organization on the planet to achieve more.</p>
+                        <button class="btn btn-primary">View Details</button>
+                    </div>
+                </div>
+            </div>
+            <div class="four columns mv3">
+                <div class="card">
+                    <div class="p3">
+                        <h4 class="mb1">Techsmith</h4>
+                        <p class="silver">Marketing</p>
+                        <p class="blokk">Empower every person and every organization on the planet to achieve more.</p>
+                        <button class="btn btn-primary">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="bg-light-gray mt3 mb0 tc">
+    <div class="pv4">
+        <p class="gray mb2">© 2017 ShowcaseMe, All Rights Reserved</p>
+        <a class="mh4">Language</a> <a class="mh4">Terms of Use</a> <a class="mh4">Privacy</a>
+    </div>
+</div>
+</body>
+<script src="[[url_for('static',filename='siema.min.js')]]"></script>
+  <link rel="stylesheet" type="text/css" href="[[url_for('static',filename='icons.min.css')]]">
+<script>
+slider = new Siema();
+document.querySelector('#left').addEventListener('click', () => slider.prev());
+document.querySelector('#right').addEventListener('click', () => slider.next());
+</script>
+
+</html>
