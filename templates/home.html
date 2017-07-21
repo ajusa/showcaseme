@@ -1,5 +1,5 @@
  [% include 'head.html' %]
-<div class="container mt4">
+<div class="container mt4" id="app">
     <div class="row mt4 pt4">
         <div class="siema pb2">
             <div class="bg-blue vh-50 white tc">
@@ -37,33 +37,13 @@
             <button class="btn-lg btn-primary mw4 w-100 mt2">Search</button>
         </div>
         <h3 class="mt3 pt3">Or, browse our new internships:</h3>
-        <div class="row cf">
-            <div class="four columns mv3">
+        <div class="row cf" v-for="row in jobs">
+            <div class="four columns mv3" v-for="job in row">
                 <div class="card">
                     <div class="p3">
-                        <h4 class="mb1">Microsoft</h4>
-                        <p class="silver">Web Dev</p>
-                        <p class="blokk">Empower every person and every organization on the planet to achieve more.</p>
-                        <button class="btn btn-primary">View Details</button>
-                    </div>
-                </div>
-            </div>
-            <div class="four columns mv3">
-                <div class="card">
-                    <div class="p3">
-                        <h4 class="mb1">Delta Dental</h4>
-                        <p class="silver">Java Dev</p>
-                        <p class="blokk">Empower every person and every organization on the planet to achieve more.</p>
-                        <button class="btn btn-primary">View Details</button>
-                    </div>
-                </div>
-            </div>
-            <div class="four columns mv3">
-                <div class="card">
-                    <div class="p3">
-                        <h4 class="mb1">Techsmith</h4>
-                        <p class="silver">Marketing</p>
-                        <p class="blokk">Empower every person and every organization on the planet to achieve more.</p>
+                        <h4 class="mb1">{{job.company}}</h4>
+                        <p class="silver">{{job.position}}</p>
+                        <p class="blokk">{{job.description}}</p>
                         <button class="btn btn-primary">View Details</button>
                     </div>
                 </div>
@@ -77,13 +57,33 @@
         <a class="mh4">Language</a> <a class="mh4">Terms of Use</a> <a class="mh4">Privacy</a>
     </div>
 </div>
-</body>
 <script src="[[url_for('static',filename='siema.min.js')]]"></script>
-  <link rel="stylesheet" type="text/css" href="[[url_for('static',filename='icons.min.css')]]">
+<link rel="stylesheet" type="text/css" href="[[url_for('static',filename='icons.min.css')]]">
+</body>
+
 <script>
 slider = new Siema();
 document.querySelector('#left').addEventListener('click', () => slider.prev());
 document.querySelector('#right').addEventListener('click', () => slider.next());
+function chunkArray(myArray, chunk_size) {
+    var index = 0;
+    var arrayLength = myArray.length;
+    var tempArray = [];
+    for (index = 0; index < arrayLength; index += chunk_size) {
+        myChunk = myArray.slice(index, index + chunk_size);
+        tempArray.push(myChunk);
+    }
+
+    return tempArray;
+}
+</script>
+<script>
+var app = new Vue({
+    el: '#app',
+    data: {
+        jobs: chunkArray([[data|tojson]], 4)
+    }
+})
 </script>
 
 </html>

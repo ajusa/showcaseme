@@ -1,6 +1,7 @@
 from flask import Flask, Response, redirect, url_for, request, session, abort, render_template, jsonify
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user 
 from flask_cors import CORS, cross_origin
+from tinydb import TinyDB, Query
 class CustomFlask(Flask):
   jinja_options = Flask.jinja_options.copy()
   jinja_options.update(dict(
@@ -19,7 +20,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 users  = {}
-product = [{"source": "walmart", "price": 50, "title": "Trolls Vehicle"}, {"source": "walmart", "price": 60, "title": "Trolls Vehicle"}]
+product = [{"company": "Microsoft", "position": "Web Dev", "description": "Empower every person and every organization on the planet to achieve more."}, {"company": "Microsoft", "position": "Web Dev", "description": "Empower every person and every organization on the planet to achieve more."}]
 class User(UserMixin):
     def __init__(self, uid):
         self.id = uid
@@ -28,23 +29,23 @@ class User(UserMixin):
 #@login_required
 def home():
     return render_template('home.html', data=product)
-@app.route("/signup", methods=["GET", "POST"])
+@app.route("/signup", methods=["GET"])
 def signup():
     return render_template('signup.html')
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == 'POST':
         uid = request.get_json()['uid']
-        if uid in users:
+        if uid in users: #Means that they have an account
             user = User(uid)
             login_user(user)
             return jsonify(result='ok')
-        else:
+        else: #Means that this is their first time with us
             users[uid] = {'name': request.get_json()['name']}
             user = User(uid)
             login_user(user)
             return jsonify(result='ok')
-    else:
+    else: #The login page for the form
         return render_template('login.html')
 
 @app.route("/logout")
