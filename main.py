@@ -1,7 +1,18 @@
-from flask import Flask, Response, redirect, url_for, request, session, abort, render_template, jsonify
-from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user 
+from flask import Flask, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
+from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user , current_user
 from flask_cors import CORS, cross_origin
 from tinydb import TinyDB, Query
+DEFAULT_PROFILE = {
+    "name": "John Doe",
+    "blurb": "Maker and Worker",
+    "projects": [
+      {
+         "title": "Work Experience",
+         "blurb": "Lead Worker",
+         "description": "Hover over me to edit this paragraph. ShowcaseMe supports Markdown in the editing popup as well!"
+      }
+   ]
+}
 class CustomFlask(Flask):
   jinja_options = Flask.jinja_options.copy()
   jinja_options.update(dict(
@@ -12,6 +23,9 @@ class CustomFlask(Flask):
     comment_start_string='[#',
     comment_end_string='#]',
   ))
+db = TinyDB('main.db')
+listings = db.table('listings')
+users = db.table('users')
 app = CustomFlask(__name__)
 app.config.update(DEBUG = True,SECRET_KEY = 'secret_xxx')
 CORS(app)
@@ -19,16 +33,21 @@ CORS(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
-users  = {}
-product = [{"company": "Microsoft", "position": "Web Dev", "description": "Empower every person and every organization on the planet to achieve more."}, {"company": "Microsoft", "position": "Web Dev", "description": "Empower every person and every organization on the planet to achieve more."}]
+def getUserData(id):
+    User = Query()
+    if users.search(User.id == id):
+        return users.search(User.id == id)[0]
+    else: 
+        return False
+#listings.insert({"company": "Microsoft", "position": "Web Dev", "description": "Empower every person and every organization on the planet to achieve more."})
 class User(UserMixin):
     def __init__(self, uid):
         self.id = uid
-        self.name = users[self.id]['name']
+        self.name = getUserData(uid)['name']
 @app.route('/')
 #@login_required
 def home():
-    return render_template('home.html', data=product)
+    return render_template('home.html', data=listings.all())
 @app.route("/signup", methods=["GET"])
 def signup():
     return render_template('signup.html')
@@ -36,12 +55,12 @@ def signup():
 def login():
     if request.method == 'POST':
         uid = request.get_json()['uid']
-        if uid in users: #Means that they have an account
+        if getUserData(uid): #Means that they have an account
             user = User(uid)
             login_user(user)
             return jsonify(result='ok')
         else: #Means that this is their first time with us
-            users[uid] = {'name': request.get_json()['name']}
+            users.insert({'name': request.get_json()['name'], 'id': uid})
             user = User(uid)
             login_user(user)
             return jsonify(result='ok')
@@ -51,8 +70,23 @@ def login():
 @app.route("/logout")
 @login_required
 def logout():
+    #print(current_user.name)
     logout_user()
     return redirect("/")
+@app.route("/profile", methods=["GET", "POST"])
+@login_required
+def profile():
+    if request.method == 'POST':
+        profile = request.get_json()
+        person = Query()
+        users.update({'profile': profile}, person.id == current_user.id)
+    else:
+        user = getUserData(current_user.id)
+        if 'profile' in user:
+            return render_template('profile.html', data = user['profile'])
+        else:
+            DEFAULT_PROFILE['name'] = current_user.name
+            return render_template('profile.html', data = DEFAULT_PROFILE)
 # handle login failed
 @app.errorhandler(401)
 def page_not_found(e):
@@ -60,7 +94,7 @@ def page_not_found(e):
 # callback to reload the user object        
 @login_manager.user_loader
 def load_user(userid):
-	if userid in users:
-		return User(userid)   
+    if getUserData(userid):
+		return User(userid)
 if __name__ == "__main__":
     app.run()

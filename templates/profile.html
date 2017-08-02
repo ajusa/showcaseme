@@ -1,0 +1,77 @@
+[% include 'head.html' %]
+<main class="container mt4" id="app">
+    <div class="row mt4 cf">
+        <div class="seven columns">
+            <div class="popover popover-right">
+                <h2 v-html="marked(user.name)" style="min-width: 40px"></h2>
+                <div class="popover-container" v-if="edit">
+                    <textarea type="text" v-model="user.name"></textarea>
+                </div>
+            </div>
+            <br>
+            <div class="popover popover-right">
+                <p style="min-width: 40px" v-html="marked(user.blurb)"></p>
+                <div class="popover-container" v-if="edit">
+                    <textarea type="text" v-model="user.blurb"></textarea>
+                </div>
+            </div>
+            <h3>Featured Projects</h3>
+            <div class="mv2 ba b-light-silver bw1" v-for="(project, index) in user.projects">
+                <div class="p3">
+                    <div class="popover popover-right">
+                        <h4 class="mb1" v-html="marked(project.title)" style="min-width: 40px"></h4>
+                        <div class="popover-container" v-if="edit">
+                            <textarea type="text" v-model="project.title"></textarea>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="popover popover-right">
+                        <div class="silver" v-html="marked(project.blurb)" style="min-width: 40px"></div>
+                        <div class="popover-container" v-if="edit">
+                            <textarea type="text" v-model="project.blurb"></textarea>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="popover popover-right">
+                        <div v-html="marked(project.description)" style="min-width: 40px"></div>
+                        <div class="popover-container" v-if="edit">
+                            <textarea type="text" v-model="project.description"></textarea>
+                        </div>
+                    </div>
+                    <br>
+                    <button class="btn btn-primary">View Details</button>
+                    <button class="fr" v-if="edit" @click="user.projects.splice(index, 1)">Delete Project</button>
+                </div>
+            </div>
+            <button class="btn-primary mv3 w-100" v-if="edit" @click="user.projects.push(JSON.parse(JSON.stringify(exampleProj)))">Add Project</button>
+            <br>
+            <button class="btn-primary mt3" v-if="edit" @click="saveProfile">Save Profile</button>
+            <button class="btn-primary mt3" v-else @click="edit = true">Edit Profile</button>
+        </div>
+        <div class="five columns"></div>
+    </div>
+</main>
+ [% include 'footer.html' %]
+</body>
+<script src="[[url_for('static',filename='marked.js')]]"></script>
+<script>
+var app = new Vue({
+    el: "#app",
+    data: {
+        edit: false,
+        marked: marked,
+        user: [[data | tojson]],
+        exampleProj: { title: "Example Title", blurb: "Intern", description: "Helped manage systems and distributed analysis of plugins relating to wordpress. Performed statistical analysis on multiple datasets using flareon architecture." }
+    },
+    methods: {
+        saveProfile: function() {
+            this.edit = false;
+            app.$http.post('/profile', this.user).then(function(resp) {
+                console.log("Saved")
+            });
+        },
+    }
+})
+</script>
+
+</html>
