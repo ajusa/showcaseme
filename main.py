@@ -78,6 +78,7 @@ def profile():
 		profile = request.get_json()
 		person = Query()
 		users.update({'profile': profile}, person.id == current_user.id)
+		return jsonify(result='ok')
 	else:
 		user = getUserData(current_user.id)
 		if 'profile' in user:

@@ -3,42 +3,36 @@
     <div class="row mt4 cf">
         <div class="seven columns">
             <div class="popover popover-right">
-                <h2 v-html="marked(user.name)" style="min-width: 40px"></h2>
+                <h2 v-html="marked(user.name.text)" style="min-width: 40px"></h2>
                 <div class="popover-container" v-if="edit">
-                    <textarea type="text" v-model="user.name"></textarea>
+                    <textarea type="text" v-model="user.name.text"></textarea>
                 </div>
             </div>
             <br>
             <div class="popover popover-right">
-                <p style="min-width: 40px" v-html="marked(user.blurb)"></p>
+                <p style="min-width: 40px" v-html="marked(user.blurb.text)"></p>
                 <div class="popover-container" v-if="edit">
-                    <textarea type="text" v-model="user.blurb"></textarea>
+                    <textarea type="text" v-model="user.blurb.text"></textarea>
                 </div>
             </div>
             <h3>Featured Projects</h3>
             <div class="mv2 ba b-light-silver bw1" v-for="(project, index) in user.projects">
                 <div class="p3">
-                    <div class="popover popover-right">
-                        <h4 class="mb1" v-html="marked(project.title)" style="min-width: 40px"></h4>
-                        <div class="popover-container" v-if="edit">
-                            <textarea type="text" v-model="project.title"></textarea>
-                        </div>
+                    <h4 class="mb1" v-html="marked(project.title.text)" style="min-width: 40px" v-if="!project.title.state" @click="project.title.state = true && edit"></h4>
+                    <div v-if="edit&&project.title.state">
+                        <textarea type="text" v-model="project.title.text"></textarea>
+                        <button class="btn-primary btn-sm" @click="project.title.state = false">Finish</button>
                     </div>
-                    <br>
-                    <div class="popover popover-right">
-                        <div class="silver" v-html="marked(project.blurb)" style="min-width: 40px"></div>
-                        <div class="popover-container" v-if="edit">
-                            <textarea type="text" v-model="project.blurb"></textarea>
-                        </div>
+                    <div class="silver" v-html="marked(project.blurb.text)" style="min-width: 40px" v-if="!project.blurb.state" @click="project.blurb.state = true && edit"></div>
+                    <div v-if="edit&&project.blurb.state">
+                        <textarea type="text" v-model="project.blurb.text"></textarea>
+                        <button class="btn-primary btn-sm" @click="project.blurb.state = false">Finish</button>
                     </div>
-                    <br>
-                    <div class="popover popover-right">
-                        <div v-html="marked(project.description)" style="min-width: 40px"></div>
-                        <div class="popover-container" v-if="edit">
-                            <textarea type="text" v-model="project.description"></textarea>
-                        </div>
+                    <div v-html="marked(project.description.text)" style="min-width: 40px" v-if="!project.description.state" @click="project.description.state = true && edit"></div>
+                    <div v-if="edit&&project.description.state">
+                        <textarea type="text" v-model="project.description.text" v-autosize="project.description.text"></textarea>
+                        <button class="btn-primary btn-sm mb2" @click="project.description.state = false">Finish</button>
                     </div>
-                    <br>
                     <button class="btn btn-primary">View Details</button>
                     <button class="fr" v-if="edit" @click="user.projects.splice(index, 1)">Delete Project</button>
                 </div>
@@ -51,26 +45,98 @@
         <div class="five columns"></div>
     </div>
 </main>
- [% include 'footer.html' %]
+[% include 'footer.html' %]
 </body>
 <script src="[[url_for('static',filename='marked.js')]]"></script>
+<script src="[[url_for('static',filename='autosize.min.js')]]"></script>
 <script>
+Vue.directive('autosize', {
+    bind: function(el, binding) {
+        var tagName = el.tagName
+        if (tagName == 'TEXTAREA') {
+            autosize(el)
+        } else if (tagName == 'INPUT' && el.type == 'text') {
+            autoSizeInput(el)
+        }
+    },
+
+    componentUpdated: function(el, binding, vnode) {
+        var tagName = el.tagName
+        if (tagName == 'TEXTAREA') {
+            autosize.update(el)
+        }
+    },
+
+    unbind: function(el) {
+        autosize.destroy(el)
+    }
+})
+
+function stripState(obj) {
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key) && key != 'projects') {
+            obj[key] = obj[key].text
+        }
+    }
+    for (var i = obj.projects.length - 1; i >= 0; i--) {
+        for (var key in obj.projects[i]) {
+            if (obj.projects[i].hasOwnProperty(key)) {
+                obj.projects[i][key] = obj.projects[i][key].text
+            }
+        }
+    }
+    return obj
+}
+
+function addState(obj) {
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key) && typeof obj[key] === 'string') {
+            var temp = obj[key]
+            obj[key] = {}
+            obj[key].text = temp
+            obj[key].state = false
+        }
+    }
+    for (var i = obj.projects.length - 1; i >= 0; i--) {
+        for (var key in obj.projects[i]) {
+            if (obj.projects[i].hasOwnProperty(key)) {
+                var temp = obj.projects[i][key]
+                obj.projects[i][key] = {}
+                obj.projects[i][key].text = temp
+                obj.projects[i][key].state = false
+            }
+        }
+    }
+    return obj
+}
+
+function addExampleState(obj) {
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            var temp = obj[key]
+            obj[key] = {}
+            obj[key].text = temp
+            obj[key].state = false
+        }
+    }
+    return obj
+}
 var app = new Vue({
     el: "#app",
     data: {
         edit: false,
         marked: marked,
-        user: [[data | tojson]],
-        exampleProj: { title: "Example Title", blurb: "Intern", description: "Helped manage systems and distributed analysis of plugins relating to wordpress. Performed statistical analysis on multiple datasets using flareon architecture." }
+        user: addState([[data | tojson]]),
+        exampleProj: addExampleState({ title: "Example Title", blurb: "Intern", description: "Helped manage systems and distributed analysis of plugins relating to wordpress. Performed statistical analysis on multiple datasets using flareon architecture." })
     },
     methods: {
         saveProfile: function() {
             this.edit = false;
-            app.$http.post('/profile', this.user).then(function(resp) {
+            app.$http.post('/profile', stripState(JSON.parse(JSON.stringify(this.user)))).then(function(resp) {
                 console.log("Saved")
             });
         },
-    }
+    },
 })
 </script>
 
