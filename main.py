@@ -44,9 +44,11 @@ class User(UserMixin):
 		self.id = uid
 		self.name = getUserData(uid)['name']
 @app.route('/')
-#@login_required
 def home():
 	return render_template('home.html', data=listings.all())
+@app.route('/about')
+def about():
+	return render_template('about.html')
 @app.route("/signup", methods=["GET"])
 def signup():
 	return render_template('signup.html')

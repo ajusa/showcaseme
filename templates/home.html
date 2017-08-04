@@ -56,9 +56,7 @@
 </body>
 <script src="[[url_for('static',filename='siema.min.js')]]"></script>
 <script>
-slider = new Siema();
-document.querySelector('#left').addEventListener('click', () => slider.prev());
-document.querySelector('#right').addEventListener('click', () => slider.next());
+
 function chunkArray(myArray, chunk_size) {
     var index = 0;
     var arrayLength = myArray.length;
@@ -78,6 +76,9 @@ var app = new Vue({
         jobs: chunkArray([[data|tojson]], 3)
     }
 })
+slider = new Siema();
+document.querySelector('#left').addEventListener('click', () => slider.prev());
+document.querySelector('#right').addEventListener('click', () => slider.next());
 </script>
 
 </html>
