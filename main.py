@@ -45,7 +45,18 @@ class User(UserMixin):
 		self.name = getUserData(uid)['name']
 @app.route('/')
 def home():
-	return render_template('home.html', data=listings.all())
+	temp = []
+	for item in users.all():
+		if 'profile' in item:
+			item['profile']['id'] = item['id']
+			temp.append(item['profile'])
+	return render_template('home.html', data=temp)
+@app.route('/student/<id>')
+def viewUser(id):
+	user = getUserData(id)
+	if 'profile' in user:
+		return render_template('profile.html', data = user['profile'], tag = TAGS)
+	return render_template('profile.html', )
 @app.route('/about')
 def about():
 	return render_template('about.html')
@@ -71,7 +82,6 @@ def login():
 @app.route("/logout")
 @login_required
 def logout():
-	#print(current_user.name)
 	logout_user()
 	return redirect("/")
 @app.route("/profile", methods=["GET", "POST"])

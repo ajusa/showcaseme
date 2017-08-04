@@ -2,33 +2,30 @@
 <main class="container mt4" id="app">
     <div class="row mt4 cf">
         <div class="seven columns">
-            <div class="popover popover-right">
-                <h2 v-html="marked(user.name.text)" style="min-width: 40px"></h2>
-                <div class="popover-container" v-if="edit">
-                    <textarea type="text" v-model="user.name.text"></textarea>
-                </div>
+            <h2 v-html="marked(user.name.text)" style="min-width: 40px; min-height: 20px;" v-if="!user.name.state" @click="user.name.state = true && edit"></h2>
+            <div v-if="edit&&user.name.state">
+                <textarea type="text" v-model="user.name.text"></textarea>
+                <button class="btn-primary btn-sm" @click="user.name.state = false">Finish</button>
             </div>
-            <br>
-            <div class="popover popover-right">
-                <p style="min-width: 40px" v-html="marked(user.blurb.text)"></p>
-                <div class="popover-container" v-if="edit">
-                    <textarea type="text" v-model="user.blurb.text"></textarea>
-                </div>
+            <p v-html="marked(user.blurb.text)" style="min-width: 40px; min-height: 20px;" v-if="!user.blurb.state" @click="user.blurb.state = true && edit"></p>
+            <div v-if="edit&&user.blurb.state">
+                <textarea type="text" v-model="user.blurb.text"></textarea>
+                <button class="btn-primary btn-sm" @click="user.blurb.state = false">Finish</button>
             </div>
             <h3>Featured Projects</h3>
             <div class="card mv3" v-for="(project, index) in user.projects">
                 <div class="p3">
-                    <h4 class="mb1" v-html="marked(project.title.text)" style="min-width: 40px" v-if="!project.title.state" @click="project.title.state = true && edit"></h4>
+                    <h4 class="mb1" v-html="marked(project.title.text)" style="min-width: 40px; min-height: 20px;" v-if="!project.title.state" @click="project.title.state = true && edit"></h4>
                     <div v-if="edit&&project.title.state">
                         <textarea type="text" v-model="project.title.text"></textarea>
                         <button class="btn-primary btn-sm" @click="project.title.state = false">Finish</button>
                     </div>
-                    <div class="silver" v-html="marked(project.blurb.text)" style="min-width: 40px" v-if="!project.blurb.state" @click="project.blurb.state = true && edit"></div>
+                    <div class="silver" v-html="marked(project.blurb.text)" style="min-width: 40px; min-height: 20px;" v-if="!project.blurb.state" @click="project.blurb.state = true && edit"></div>
                     <div v-if="edit&&project.blurb.state">
                         <textarea type="text" v-model="project.blurb.text"></textarea>
                         <button class="btn-primary btn-sm" @click="project.blurb.state = false">Finish</button>
                     </div>
-                    <div v-html="marked(project.description.text)" style="min-width: 40px" v-if="!project.description.state" @click="project.description.state = true && edit"></div>
+                    <div v-html="marked(project.description.text)" style="min-width: 40px; min-height: 20px;" v-if="!project.description.state" @click="project.description.state = true && edit"></div>
                     <div v-if="edit&&project.description.state">
                         <textarea type="text" v-model="project.description.text" v-autosize="project.description.text"></textarea>
                         <button class="btn-primary btn-sm mb2" @click="project.description.state = false">Finish</button>
@@ -38,9 +35,10 @@
                 </div>
             </div>
             <button class="btn-primary mv3 w-100" v-if="edit" @click="user.projects.push(JSON.parse(JSON.stringify(exampleProj)))">Add Project</button>
-            <br>
-            <button class="btn-primary mt3" v-if="edit" @click="saveProfile">Save Profile</button>
-            <button class="btn-primary mt3" v-else @click="edit = true">Edit Profile</button>
+            [% if current_user.is_authenticated %]
+            <button class="btn-primary" v-if="edit" @click="saveProfile">Save Profile</button>
+            <button class="btn-primary" v-else @click="edit = true">Edit Profile</button>
+            [% endif %]
         </div>
         <div class="five columns">
             <h3>Skills</h3>       
@@ -168,6 +166,7 @@ var app = new Vue({
     methods: {
         saveProfile: function() {
             this.edit = false;
+            this.user.tags.sort(function(a, b){return b.skill - a.skill})
             app.$http.post('/profile', stripState(JSON.parse(JSON.stringify(this.user)))).then(function(resp) {
                 console.log("Saved")
             });

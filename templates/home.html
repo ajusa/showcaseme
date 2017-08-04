@@ -31,32 +31,35 @@
             <button class="btn btn-link btn-lg fl" id="left"><i class="icon icon-arrow-left"></i></button>
             <button class="btn btn-link btn-lg fr" id="right"><i class="icon icon-arrow-right"></i></button>
         </div>
-        <h3 class="mt4 pt4">Search for internships near you...</h3>
+        <h3 class="mt4 pt4">Search for students near you...</h3>
         <div class="mb3 pb3">
             <input class="mv2 f4" type="text" placeholder="web designer" />
             <button class="btn-lg btn-primary mw4 w-100 mt2">Search</button>
         </div>
-        <h3 class="mt3 pt3">Or, browse our new internships:</h3>
-        <div class="row cf" v-for="row in jobs">
-            <div class="four columns mv3" v-for="job in row">
+        <h3 class="mt3 pt3">Or, browse our featured students:</h3>
+        <div class="row cf" v-for="row in students">
+            <div class="four columns mv3" v-for="student in row">
                 <div class="card">
                     <div class="p3">
-                        <h4 class="mb1">{{job.company}}</h4>
-                        <p class="silver">{{job.position}}</p>
-                        <p class="blokk">{{job.description}}</p>
-                        <button class="btn btn-primary">View Details</button>
+                        <h4 class="mb1">{{student.name}}</h4>
+                        <p class="silver" v-html=>{{student.blurb}}</p>
+                        <span class="m1 mv2 dib" v-for="tag in student.tags">
+                            <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
+                                {{tag.name}}
+                            </label>
+                        </span>
+                        <a class="btn mt3" :href="'/student/' + student.id">View Details</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
- [% include 'footer.html' %]
+[% include 'footer.html' %]
 <link rel="stylesheet" type="text/css" href="[[url_for('static',filename='icons.min.css')]]">
 </body>
 <script src="[[url_for('static',filename='siema.min.js')]]"></script>
 <script>
-
 function chunkArray(myArray, chunk_size) {
     var index = 0;
     var arrayLength = myArray.length;
@@ -73,7 +76,7 @@ function chunkArray(myArray, chunk_size) {
 var app = new Vue({
     el: '#app',
     data: {
-        jobs: chunkArray([[data|tojson]], 3)
+        students: chunkArray([[data | tojson]], 3)
     }
 })
 slider = new Siema();
