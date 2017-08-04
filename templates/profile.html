@@ -30,9 +30,8 @@
                         <textarea type="text" v-model="project.description.text" v-autosize="project.description.text"></textarea>
                         <button class="btn-primary btn-sm mb2" @click="project.description.state = false">Finish</button>
                     </div>
-                    <button class="btn btn-primary" @click='swal({title: marked(project.title.text), text: "hi", html: true})'>
                     View Details</button>
-                    <button class="fr" v-if="edit" @click="user.projects.splice(index, 1)">Delete Project</button>
+                    <button v-if="edit" @click="user.projects.splice(index, 1)">Delete Project</button>
                 </div>
             </div>
             <button class="btn-primary mv3 w-100" v-if="edit" @click="user.projects.push(JSON.parse(JSON.stringify(exampleProj)))">Add Project</button>
