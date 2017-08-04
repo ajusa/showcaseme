@@ -30,7 +30,8 @@
                         <textarea type="text" v-model="project.description.text" v-autosize="project.description.text"></textarea>
                         <button class="btn-primary btn-sm mb2" @click="project.description.state = false">Finish</button>
                     </div>
-                    <button class="btn btn-primary">View Details</button>
+                    <button class="btn btn-primary" @click='swal({title: marked(project.title.text), text: "hi", html: true})'>
+                    View Details</button>
                     <button class="fr" v-if="edit" @click="user.projects.splice(index, 1)">Delete Project</button>
                 </div>
             </div>
@@ -162,13 +163,14 @@ var app = new Vue({
         tags: addTagState([[tag | tojson]]),
         exampleProj: addExampleState({ title: "Example Title", blurb: "Intern", description: "Helped manage systems and distributed analysis of plugins relating to wordpress. Performed statistical analysis on multiple datasets using flareon architecture." }),
         searchTerm: '',
+        swal: swal,
     },
     methods: {
         saveProfile: function() {
             this.edit = false;
             this.user.tags.sort(function(a, b){return b.skill - a.skill})
             app.$http.post('/profile', stripState(JSON.parse(JSON.stringify(this.user)))).then(function(resp) {
-                console.log("Saved")
+                swal("", "Profile has been saved!", "success")
             });
         },
         addTag: function(i) {
