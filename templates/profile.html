@@ -30,7 +30,6 @@
                         <textarea type="text" v-model="project.description.text" v-autosize="project.description.text"></textarea>
                         <button class="btn-primary btn-sm mb2" @click="project.description.state = false">Finish</button>
                     </div>
-                    View Details</button>
                     <button v-if="edit" @click="user.projects.splice(index, 1)">Delete Project</button>
                 </div>
             </div>
