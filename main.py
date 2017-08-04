@@ -12,6 +12,7 @@ DEFAULT_PROFILE = {
 	  }
    ]
 }
+TAGS = lines = open("tags.txt").read().splitlines()
 class CustomFlask(Flask):
 	jinja_options = Flask.jinja_options.copy()
 	jinja_options.update(dict(
@@ -82,7 +83,7 @@ def profile():
 	else:
 		user = getUserData(current_user.id)
 		if 'profile' in user:
-			return render_template('profile.html', data = user['profile'])
+			return render_template('profile.html', data = user['profile'], tag = TAGS)
 		else:
 			DEFAULT_PROFILE['name'] = current_user.name
 			return render_template('profile.html', data = DEFAULT_PROFILE)

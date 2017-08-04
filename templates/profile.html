@@ -16,7 +16,7 @@
                 </div>
             </div>
             <h3>Featured Projects</h3>
-            <div class="mv2 ba b-light-silver bw1" v-for="(project, index) in user.projects">
+            <div class="card mv3" v-for="(project, index) in user.projects">
                 <div class="p3">
                     <h4 class="mb1" v-html="marked(project.title.text)" style="min-width: 40px" v-if="!project.title.state" @click="project.title.state = true && edit"></h4>
                     <div v-if="edit&&project.title.state">
@@ -42,92 +42,128 @@
             <button class="btn-primary mt3" v-if="edit" @click="saveProfile">Save Profile</button>
             <button class="btn-primary mt3" v-else @click="edit = true">Edit Profile</button>
         </div>
-        <div class="five columns"></div>
+        <div class="five columns">
+            <h3>Skills</h3>       
+                <span class="m1 mv2 dib" v-for="(tag, index) in user.tags.slice().sort(function(a, b){return b.skill - a.skill})">
+                    <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
+                        {{tag.name}}
+                        <i class="icon icon-arrow-up ml2 dim" v-if="edit && tag.skill < 2" @click="tag.skill++"></i>
+                        <i class="icon icon-arrow-down ml2 dim" v-if="edit && tag.skill > 0" @click="tag.skill--"></i>
+                        <i class="icon icon-cross ml2 dim" v-if="edit" @click="removeTag(index)"></i>
+                    </label>
+                </span>
+            <div v-if="edit">
+                <input type="text" v-model="searchTerm">
+                <span class="m1 mv2 dib" v-for="(tag, index) in results">
+                    <label class="chip">
+                        {{tag.name}}
+                        <i class="icon icon-plus ml2" @click="addTag(index)"></i>
+                    </label>
+                </span>
+            </div>
+        </div>
     </div>
 </main>
 [% include 'footer.html' %]
 </body>
 <script src="[[url_for('static',filename='marked.js')]]"></script>
 <script src="[[url_for('static',filename='autosize.min.js')]]"></script>
+<script src="[[url_for('static',filename='fuse.js')]]"></script>
 <script>
-Vue.directive('autosize', {
-    bind: function(el, binding) {
-        var tagName = el.tagName
-        if (tagName == 'TEXTAREA') {
-            autosize(el)
-        } else if (tagName == 'INPUT' && el.type == 'text') {
-            autoSizeInput(el)
-        }
-    },
+    Vue.directive('autosize', {
+        bind: function(el, binding) {
+            var tagName = el.tagName
+            if (tagName == 'TEXTAREA') {
+                autosize(el)
+            } else if (tagName == 'INPUT' && el.type == 'text') {
+                autoSizeInput(el)
+            }
+        },
 
-    componentUpdated: function(el, binding, vnode) {
-        var tagName = el.tagName
-        if (tagName == 'TEXTAREA') {
-            autosize.update(el)
-        }
-    },
+        componentUpdated: function(el, binding, vnode) {
+            var tagName = el.tagName
+            if (tagName == 'TEXTAREA') {
+                autosize.update(el)
+            }
+        },
 
-    unbind: function(el) {
-        autosize.destroy(el)
-    }
-})
-
-function stripState(obj) {
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key) && key != 'projects') {
-            obj[key] = obj[key].text
+        unbind: function(el) {
+            autosize.destroy(el)
         }
-    }
-    for (var i = obj.projects.length - 1; i >= 0; i--) {
-        for (var key in obj.projects[i]) {
-            if (obj.projects[i].hasOwnProperty(key)) {
-                obj.projects[i][key] = obj.projects[i][key].text
+    })
+
+    function stripState(obj) {
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key) && key != 'projects' && key != 'tags') {
+                obj[key] = obj[key].text
             }
         }
-    }
-    return obj
-}
-
-function addState(obj) {
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key) && typeof obj[key] === 'string') {
-            var temp = obj[key]
-            obj[key] = {}
-            obj[key].text = temp
-            obj[key].state = false
-        }
-    }
-    for (var i = obj.projects.length - 1; i >= 0; i--) {
-        for (var key in obj.projects[i]) {
-            if (obj.projects[i].hasOwnProperty(key)) {
-                var temp = obj.projects[i][key]
-                obj.projects[i][key] = {}
-                obj.projects[i][key].text = temp
-                obj.projects[i][key].state = false
+        for (var i = obj.projects.length - 1; i >= 0; i--) {
+            for (var key in obj.projects[i]) {
+                if (obj.projects[i].hasOwnProperty(key)) {
+                    obj.projects[i][key] = obj.projects[i][key].text
+                }
             }
         }
+        return obj
     }
-    return obj
-}
 
-function addExampleState(obj) {
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            var temp = obj[key]
-            obj[key] = {}
-            obj[key].text = temp
-            obj[key].state = false
+    function addState(obj) {
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key) && typeof obj[key] === 'string') {
+                var temp = obj[key]
+                obj[key] = {}
+                obj[key].text = temp
+                obj[key].state = false
+            }
         }
+        for (var i = obj.projects.length - 1; i >= 0; i--) {
+            for (var key in obj.projects[i]) {
+                if (obj.projects[i].hasOwnProperty(key)) {
+                    var temp = obj.projects[i][key]
+                    obj.projects[i][key] = {}
+                    obj.projects[i][key].text = temp
+                    obj.projects[i][key].state = false
+                }
+            }
+        }
+        return obj
     }
-    return obj
-}
+
+    function addExampleState(obj) {
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                var temp = obj[key]
+                obj[key] = {}
+                obj[key].text = temp
+                obj[key].state = false
+            }
+        }
+        return obj
+    }
+
+    function addTagState(tags) {
+        var arr = []
+        for (var i = tags.length - 1; i >= 0; i--) {
+            arr.push({ name: tags[i], skill: 0 })
+        }
+        return arr
+    }
+</script>
+<link rel="stylesheet" href="[[url_for('static',filename='icons.min.css')]]">
+<script>
 var app = new Vue({
     el: "#app",
+    created: function() {
+        this.$set(this.user, 'tags', this.user.tags || [])
+    },
     data: {
         edit: false,
         marked: marked,
         user: addState([[data | tojson]]),
-        exampleProj: addExampleState({ title: "Example Title", blurb: "Intern", description: "Helped manage systems and distributed analysis of plugins relating to wordpress. Performed statistical analysis on multiple datasets using flareon architecture." })
+        tags: addTagState([[tag | tojson]]),
+        exampleProj: addExampleState({ title: "Example Title", blurb: "Intern", description: "Helped manage systems and distributed analysis of plugins relating to wordpress. Performed statistical analysis on multiple datasets using flareon architecture." }),
+        searchTerm: '',
     },
     methods: {
         saveProfile: function() {
@@ -135,6 +171,38 @@ var app = new Vue({
             app.$http.post('/profile', stripState(JSON.parse(JSON.stringify(this.user)))).then(function(resp) {
                 console.log("Saved")
             });
+        },
+        addTag: function(i) {
+            this.user.tags.push(this.results[i])
+            this.user.tags.sort(function(a, b){return b.skill - a.skill})
+        },
+        removeTag: function(i) {
+            this.user.tags.splice(i, 1)
+            this.user.tags.sort(function(a, b){return b.skill - a.skill})
+        },
+    },
+    computed: {
+        results: function() {
+            var self = this;
+            var options = {
+                shouldSort: true,
+                threshold: 0.6,
+                location: 0,
+                distance: 100,
+                maxPatternLength: 32,
+                minMatchCharLength: 1,
+                keys: ["name"]
+            };
+            var fuse = new Fuse(this.tags, options);
+            var arr = fuse.search(this.searchTerm)
+            var temp = []
+            for (var i = this.user.tags.length - 1; i >= 0; i--) {
+                temp.push(this.user.tags[i].name)
+            }
+            arr = arr.filter(function(val) {
+                return temp.indexOf(val.name) == -1;
+            })
+            return arr
         },
     },
 })
