@@ -46,7 +46,7 @@
                     </label>
                 </span>
             <div v-if="edit">
-                <input type="text" v-model="searchTerm">
+                <input type="text" v-model="searchTerm" placeholder="Start typing to search">
                 <span class="m1 mv2 dib" v-for="(tag, index) in results">
                     <label class="chip">
                         {{tag.name}}
