@@ -2,42 +2,30 @@
 <main class="container mt4" id="app">
     <div class="row mt2 cf">
         <div class="seven columns mt2">
-            <h2 v-html="marked(user.name.text)" style="min-width: 40px; min-height: 20px;" v-if="!user.name.state" @click="user.name.state = true && edit"></h2>
-            <div v-if="edit&&user.name.state">
-                <textarea type="text" v-model="user.name.text"></textarea>
-                <button class="btn-primary btn-sm" @click="user.name.state = false">Finish</button>
-            </div>
-            <p v-html="marked(user.blurb.text)" style="min-width: 40px; min-height: 20px;" v-if="!user.blurb.state" @click="user.blurb.state = true && edit"></p>
-            <div v-if="edit&&user.blurb.state">
-                <textarea type="text" v-model="user.blurb.text"></textarea>
-                <button class="btn-primary btn-sm" @click="user.blurb.state = false">Finish</button>
-            </div>
+            <fancy-input v-model="user.name" :edit="edit">
+                <h2 v-html="m(user.name)"></h2></fancy-input>
+            <fancy-input v-model="user.blurb" :edit="edit">
+                <p v-html="m(user.blurb)"></p>
+            </fancy-input>
             <h3>Featured Projects</h3>
             <div class="card mv3" v-for="(project, index) in user.projects">
                 <div class="p3">
-                    <h4 class="mb1" v-html="marked(project.title.text)" style="min-width: 40px; min-height: 20px;" v-if="!project.title.state" @click="project.title.state = true && edit"></h4>
-                    <div v-if="edit&&project.title.state">
-                        <textarea type="text" v-model="project.title.text"></textarea>
-                        <button class="btn-primary btn-sm" @click="project.title.state = false">Finish</button>
-                    </div>
-                    <div class="silver" v-html="marked(project.blurb.text)" style="min-width: 40px; min-height: 20px;" v-if="!project.blurb.state" @click="project.blurb.state = true && edit"></div>
-                    <div v-if="edit&&project.blurb.state">
-                        <textarea type="text" v-model="project.blurb.text"></textarea>
-                        <button class="btn-primary btn-sm" @click="project.blurb.state = false">Finish</button>
-                    </div>
-                    <div v-html="marked(project.description.text)" style="min-width: 40px; min-height: 20px;" v-if="!project.description.state" @click="project.description.state = true && edit"></div>
-                    <div v-if="edit&&project.description.state">
-                        <textarea type="text" v-model="project.description.text" v-autosize="project.description.text"></textarea>
-                        <button class="btn-primary btn-sm mb2" @click="project.description.state = false">Finish</button>
-                    </div>
+                    <fancy-input v-model="project.title" :edit="edit">
+                        <h4 class="mb1" v-html="m(project.title)"></h4></fancy-input>
+                    <fancy-input v-model="project.blurb" :edit="edit">
+                        <p class="silver" v-html="m(project.blurb)"></p>
+                    </fancy-input>
+                    <fancy-input v-model="project.description" :edit="edit">
+                        <div v-html="m(project.description)"></div>
+                    </fancy-input>
                     <button v-if="edit" @click="user.projects.splice(index, 1)">Delete Project</button>
                 </div>
             </div>
             <button class="btn-primary mv3 w-100" v-if="edit" @click="user.projects.push(JSON.parse(JSON.stringify(exampleProj)))">Add Project</button>
         </div>
         <div class="five columns mt2">
-            <h3>Skills</h3>       
-                <span class="m1 mv2 dib" v-for="(tag, index) in user.tags.slice().sort(function(a, b){return b.skill - a.skill})">
+            <h3>Skills</h3>
+            <span class="m1 mv2 dib" v-for="(tag, index) in user.tags.slice().sort(function(a, b){return b.skill - a.skill})">
                     <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
                         {{tag.name}}
                         <i class="icon icon-arrow-up ml2 dim" v-if="edit && tag.skill < 2" @click="tag.skill++"></i>
@@ -57,8 +45,8 @@
         </div>
     </div>
     [% if current_user.is_authenticated %]
-        <button class="btn-primary mt2" v-if="edit" @click="saveProfile">Save Profile</button>
-        <button class="btn-primary mt2" v-else @click="edit = true">Edit Profile</button>
+    <button class="btn-primary mt2" v-if="edit" @click="saveProfile">Save Profile</button>
+    <button class="btn-primary mt2" v-else @click="edit = true">Edit Profile</button>
     [% endif %]
 </main>
 [% include 'footer.html' %]
@@ -66,89 +54,58 @@
 <script src="[[url_for('static',filename='marked.js')]]"></script>
 <script src="[[url_for('static',filename='autosize.min.js')]]"></script>
 <script src="[[url_for('static',filename='fuse.js')]]"></script>
-<script>
-    Vue.directive('autosize', {
-        bind: function(el, binding) {
-            var tagName = el.tagName
-            if (tagName == 'TEXTAREA') {
-                autosize(el)
-            } else if (tagName == 'INPUT' && el.type == 'text') {
-                autoSizeInput(el)
-            }
-        },
-
-        componentUpdated: function(el, binding, vnode) {
-            var tagName = el.tagName
-            if (tagName == 'TEXTAREA') {
-                autosize.update(el)
-            }
-        },
-
-        unbind: function(el) {
-            autosize.destroy(el)
-        }
-    })
-
-    function stripState(obj) {
-        for (var key in obj) {
-            if (obj.hasOwnProperty(key) && key != 'projects' && key != 'tags') {
-                obj[key] = obj[key].text
-            }
-        }
-        for (var i = obj.projects.length - 1; i >= 0; i--) {
-            for (var key in obj.projects[i]) {
-                if (obj.projects[i].hasOwnProperty(key)) {
-                    obj.projects[i][key] = obj.projects[i][key].text
-                }
-            }
-        }
-        return obj
-    }
-
-    function addState(obj) {
-        for (var key in obj) {
-            if (obj.hasOwnProperty(key) && typeof obj[key] === 'string') {
-                var temp = obj[key]
-                obj[key] = {}
-                obj[key].text = temp
-                obj[key].state = false
-            }
-        }
-        for (var i = obj.projects.length - 1; i >= 0; i--) {
-            for (var key in obj.projects[i]) {
-                if (obj.projects[i].hasOwnProperty(key)) {
-                    var temp = obj.projects[i][key]
-                    obj.projects[i][key] = {}
-                    obj.projects[i][key].text = temp
-                    obj.projects[i][key].state = false
-                }
-            }
-        }
-        return obj
-    }
-
-    function addExampleState(obj) {
-        for (var key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                var temp = obj[key]
-                obj[key] = {}
-                obj[key].text = temp
-                obj[key].state = false
-            }
-        }
-        return obj
-    }
-
-    function addTagState(tags) {
-        var arr = []
-        for (var i = tags.length - 1; i >= 0; i--) {
-            arr.push({ name: tags[i], skill: 0 })
-        }
-        return arr
-    }
-</script>
 <link rel="stylesheet" href="[[url_for('static',filename='icons.min.css')]]">
+
 <script>
+Vue.directive('autosize', {
+    bind: function(el, binding) {
+        var tagName = el.tagName
+        if (tagName == 'TEXTAREA')
+            autosize(el)
+        else if (tagName == 'INPUT' && el.type == 'text')
+            autoSizeInput(el)
+    },
+    componentUpdated: function(el, binding, vnode) {
+        var tagName = el.tagName
+        if (tagName == 'TEXTAREA')
+            autosize.update(el)
+    },
+    unbind: function(el) {
+        autosize.destroy(el)
+    }
+})
+
+function addTagState(tags) {
+    var arr = []
+    for (var i = tags.length - 1; i >= 0; i--) {
+        arr.push({ name: tags[i], skill: 0 })
+    }
+    return arr
+}
+</script>
+<script type="text/x-template" id="fancy">
+    <div class="mb1">
+        <div v-if="!state" style="min-width: 40px; min-height: 20px;" @click="state = true && edit">
+            <slot></slot>
+        </div>
+        <div v-if="edit&&state">
+            <textarea type="text" v-model="ivalue" v-autosize="ivalue"></textarea>
+            <button class="btn-primary btn-sm" @click="save">Finish</button>
+        </div>
+    </div>
+</script>
+<script>
+Vue.component('fancyInput', {
+    props: ['value', 'edit'],
+    data: function() { return { state: false, ivalue: this.value } },
+    methods: {
+        save: function() {
+            this.state = false
+            this.$emit('input', this.ivalue)
+        }
+    },
+    template: "#fancy"
+});
 var app = new Vue({
     el: "#app",
     created: function() {
@@ -156,46 +113,37 @@ var app = new Vue({
     },
     data: {
         edit: false,
-        marked: marked,
-        user: addState([[data | tojson]]),
+        m: marked,
+        user: [[data | tojson]],
         tags: addTagState([[tag | tojson]]),
-        exampleProj: addExampleState({ title: "Example Title", blurb: "Intern", description: "Helped manage systems and distributed analysis of plugins relating to wordpress. Performed statistical analysis on multiple datasets using flareon architecture." }),
+        exampleProj: { title: "Example Title", blurb: "Intern", description: "Helped manage systems and distributed analysis of plugins relating to wordpress. Performed statistical analysis on multiple datasets using flareon architecture." },
         searchTerm: '',
         swal: swal,
     },
     methods: {
         saveProfile: function() {
             this.edit = false;
-            this.user.tags.sort(function(a, b){return b.skill - a.skill})
-            app.$http.post('/profile', stripState(JSON.parse(JSON.stringify(this.user)))).then(function(resp) {
+            this.user.tags.sort(function(a, b) { return b.skill - a.skill })
+            app.$http.post('/profile', this.user).then(function(resp) {
                 swal("", "Profile has been saved!", "success")
             });
         },
         addTag: function(i) {
+            this.user.tags.sort(function(a, b) { return b.skill - a.skill })
             this.user.tags.push(this.results[i])
-            this.user.tags.sort(function(a, b){return b.skill - a.skill})
         },
         removeTag: function(i) {
+            this.user.tags.sort(function(a, b) { return b.skill - a.skill })
             this.user.tags.splice(i, 1)
-            this.user.tags.sort(function(a, b){return b.skill - a.skill})
         },
     },
     computed: {
         results: function() {
             var self = this;
-            var options = {
-                shouldSort: true,
-                threshold: 0.6,
-                location: 0,
-                distance: 100,
-                maxPatternLength: 32,
-                minMatchCharLength: 1,
-                keys: ["name"]
-            };
-            var fuse = new Fuse(this.tags, options);
+            var fuse = new Fuse(this.tags, {keys: ["name"]});
             var arr = fuse.search(this.searchTerm)
             var temp = []
-            for (var i = this.user.tags.length - 1; i >= 0; i--) {
+            for (var i = this.user.tags.length - 1; i >= 0; i--) { //this bit of code is to avoid adding duplicates.
                 temp.push(this.user.tags[i].name)
             }
             arr = arr.filter(function(val) {
