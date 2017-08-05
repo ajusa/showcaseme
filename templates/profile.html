@@ -1,7 +1,7 @@
 [% include 'head.html' %]
 <main class="container mt4" id="app">
-    <div class="row mt4 cf">
-        <div class="seven columns">
+    <div class="row mt2 cf">
+        <div class="seven columns mt2">
             <h2 v-html="marked(user.name.text)" style="min-width: 40px; min-height: 20px;" v-if="!user.name.state" @click="user.name.state = true && edit"></h2>
             <div v-if="edit&&user.name.state">
                 <textarea type="text" v-model="user.name.text"></textarea>
@@ -34,12 +34,8 @@
                 </div>
             </div>
             <button class="btn-primary mv3 w-100" v-if="edit" @click="user.projects.push(JSON.parse(JSON.stringify(exampleProj)))">Add Project</button>
-            [% if current_user.is_authenticated %]
-            <button class="btn-primary" v-if="edit" @click="saveProfile">Save Profile</button>
-            <button class="btn-primary" v-else @click="edit = true">Edit Profile</button>
-            [% endif %]
         </div>
-        <div class="five columns">
+        <div class="five columns mt2">
             <h3>Skills</h3>       
                 <span class="m1 mv2 dib" v-for="(tag, index) in user.tags.slice().sort(function(a, b){return b.skill - a.skill})">
                     <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
@@ -60,6 +56,10 @@
             </div>
         </div>
     </div>
+    [% if current_user.is_authenticated %]
+        <button class="btn-primary mt2" v-if="edit" @click="saveProfile">Save Profile</button>
+        <button class="btn-primary mt2" v-else @click="edit = true">Edit Profile</button>
+    [% endif %]
 </main>
 [% include 'footer.html' %]
 </body>
