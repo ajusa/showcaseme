@@ -41,8 +41,8 @@
             <div class="four columns mv3" v-for="student in row">
                 <div class="card">
                     <div class="p3">
-                        <h4 class="mb1">{{student.name}}</h4>
-                        <p class="silver" v-html=>{{student.blurb}}</p>
+                        <h4 class="mb1" v-html="m(student.name)"></h4>
+                        <p class="silver" v-html="m(student.blurb)"></p>
                         <span class="m1 mv2 dib" v-for="tag in student.tags">
                             <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
                                 {{tag.name}}
@@ -76,7 +76,8 @@ function chunkArray(myArray, chunk_size) {
 var app = new Vue({
     el: '#app',
     data: {
-        students: chunkArray([[data | tojson]], 3)
+        students: chunkArray([[data | tojson]], 3),
+        m: marked,
     }
 })
 slider = new Siema();
