@@ -99,7 +99,7 @@ def profile():
 			return render_template('profile.html', data = user['profile'], tag = TAGS)
 		else:
 			DEFAULT_PROFILE['name'] = current_user.name
-			return render_template('profile.html', data = DEFAULT_PROFILE)
+			return render_template('profile.html', data = DEFAULT_PROFILE, tag = TAGS)
 # handle login failed
 @app.errorhandler(401)
 def page_not_found(e):
