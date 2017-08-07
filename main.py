@@ -10,7 +10,7 @@ DEFAULT_PROFILE = {
 		"blurb": "Lead Worker",
 		"description": "Hover over me to edit this paragraph. ShowcaseMe supports Markdown in the editing popup as well!"
 	  },
-	  "tags": [],
+	  "tags": []
    ]
 }
 TAGS = lines = open("tags.txt").read().splitlines()
