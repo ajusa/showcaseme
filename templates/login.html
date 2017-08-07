@@ -1,7 +1,7 @@
 [% include 'head.html' %]
 <div class="container mt4" id="app">
-    <div class="row mt4 pt4 cf">
-        <div class="six columns">
+    <div class="row cf">
+        <div class="six columns mt4">
             <h3 class="mb2 pb2">Sign in</h3>
             <input type="text" v-model="email" placeholder="Email" />
             <input type="password" v-model="password" placeholder="Password" />
@@ -9,11 +9,11 @@
             <i class="form-icon"></i> Remember me
             <button class="mt3 btn btn-primary btn-lg w-100 grow" @click="login">Login</button>
         </div>
-        <div class="six columns">
+        <div class="six columns mt4">
             <h3 class="mb2 pb2 tc">Or, sign in with...</h3>
             <img @click="withGoogle" class="img-fit-contain center pv2 grow" width="200px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2000px-Google_2015_logo.svg.png" alt="">
             <br>
-            <img class="img-fit-contain center pv2 grow" width="200px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Facebook_New_Logo_%282015%29.svg/512px-Facebook_New_Logo_%282015%29.svg.png" alt="">
+            <img class="img-fit-contain center pv2 grow mb2" width="200px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Facebook_New_Logo_%282015%29.svg/512px-Facebook_New_Logo_%282015%29.svg.png" alt="">
         </div>
     </div>
 </div>
