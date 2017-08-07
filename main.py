@@ -1,6 +1,7 @@
 from flask import Flask, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user , current_user
 from tinydb import TinyDB, Query
+import json
 DEFAULT_PROFILE = {
 	"name": "John Doe",
 	"blurb": "Maker and Worker",
@@ -57,7 +58,14 @@ def viewUser(id):
 	user = getUserData(id)
 	if 'profile' in user:
 		return render_template('profile.html', data = user['profile'], tag = TAGS)
-	return render_template('profile.html', )
+	return render_template('profile.html')
+@app.route('/addMockdata')
+def addMockdata():
+	raw = open("mockdata.json").read()
+	data = json.loads(raw)
+	for user in data:
+		users.insert(user)
+	return jsonify(result='ok')
 @app.route('/about')
 def about():
 	return render_template('about.html')

@@ -43,7 +43,7 @@
                     <div class="p3">
                         <h4 class="mb1" v-html="m(student.name)"></h4>
                         <p class="silver" v-html="m(student.blurb)"></p>
-                        <span class="m1 mv2 dib" v-for="tag in student.tags">
+                        <span class="m1 mv2 dib" v-for="tag in student.tags.slice().sort(function(a, b){return b.skill - a.skill})">
                             <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
                                 {{tag.name}}
                             </label>
