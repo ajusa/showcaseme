@@ -9,7 +9,8 @@ DEFAULT_PROFILE = {
 		"title": "Work Experience",
 		"blurb": "Lead Worker",
 		"description": "Hover over me to edit this paragraph. ShowcaseMe supports Markdown in the editing popup as well!"
-	  }
+	  },
+	  "tags": [],
    ]
 }
 TAGS = lines = open("tags.txt").read().splitlines()
@@ -94,7 +95,7 @@ def profile():
 		return jsonify(result='ok')
 	else:
 		user = getUserData(current_user.id)
-		if 'profile' in user:
+		if 'profile' in user :
 			return render_template('profile.html', data = user['profile'], tag = TAGS)
 		else:
 			DEFAULT_PROFILE['name'] = current_user.name
