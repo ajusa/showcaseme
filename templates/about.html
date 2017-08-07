@@ -27,9 +27,12 @@
     <br>
     <h3>Contact Us</h3>
     <div class="mw7">
-    	<input type="text" placeholder="Name">
-    	<textarea cols="30" rows="10" placeholder="Message"></textarea>
-    	<button>Submit</button>
+        <form action="https://formspree.io/showcaseme.xyz@gmail.com" method="POST">
+            <input type="text" name="name" placeholder="Name">
+            <input type="email" name="_replyto" placeholder="Email">
+            <textarea cols="30" rows="10" placeholder="Message" name="message"></textarea>
+            <input class="btn" type="submit" value="Submit">
+        </form>
     </div>
 </div>
 [% include 'footer.html' %]
