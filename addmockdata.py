@@ -9,6 +9,7 @@ def addMockdata():
 	data = json.loads(raw)
 	for user in data:
 		users.insert(user)
-	return jsonify(result='ok')
+	return True
 if __name__ == '__main__':
-	addMockdata()
+	if addMockdata():
+		print 'OK'
