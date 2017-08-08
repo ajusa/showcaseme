@@ -57,7 +57,7 @@ def viewUser(id):
 	user = getUserData(id)
 	if 'profile' in user:
 		return render_template('profile.html', data = user['profile'], tag = TAGS)
-	return render_template('profile.html', )
+	return render_template('profile.html')
 @app.route('/about')
 def about():
 	return render_template('about.html')
