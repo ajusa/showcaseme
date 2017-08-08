@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Showcase Me</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="aj.min.css">
+</head>
+
+<body>
+    <header class="navbar ph4 pv3 bg-near-white">
+        <section class="fl">
+            <a href="home.html" class="b btn btn-link tracked">ShowcaseMe</a>
+            <a href="#" class="btn btn-link">Updates</a>
+            <a href="#" class="btn btn-link">About</a>
+        </section>
+        <section class="fr">
+            <div class="popover popover-bottom mr2">
+                <figure class="avatar bg-blue" data-initial="AJ"></figure>
+                <div class="popover-container">
+                    <ul class="menu mw3">
+                        <li class="menu-item b"><a href="#">Edit Profile</a></li>
+                        <li class="menu-item"><a href="#">Notifications</a></li>
+                        <li class="menu-item"><a href="#">Settings</a></li>
+                    </ul>
+                </div>
+            </div>
+            <a href="#" class="btn btn-link">Sign Out</a>
+        </section>
+    </header>
+    <div class="container mt4">
+        <h3>Edit Profile...</h3>
+        <div class="row cf">
+            <div class="six columns">
+                <h4 class="pt1 mt2 mb1">Personal Information</h4>
+                <label class="mt3 fw4">Name</label>
+                <input type="text" placeholder="Name" value="Arham Jain" />
+                <label class="mt3 fw4">Email</label>
+                <input type="text" placeholder="Email" value="arhamjain@gmail.com" />
+                <label class="mt3 fw4">Phone Number (just the number, no dashes)</label>
+                <input type="number" placeholder="Phone Number" value="5175678866" />
+                <label class="mt3 fw4">Gender</label>
+                <label class="fw4">
+                    <input type="radio" name="gender" checked />
+                    <i class="form-icon"></i> Male
+                </label>
+                <label class="fw4">
+                    <input type="radio" name="gender" />
+                    <i class="form-icon"></i> Female
+                </label>
+                <label class="fw4">
+                    <input type="radio" name="gender" />
+                    <i class="form-icon"></i> Other
+                </label>
+                <label class="mt3 fw4">About You</label>
+                <textarea placeholder="Tell us about yourself" rows="3"></textarea>
+            </div>
+            <div class="six columns">
+                <h4 class="pt1 mt2 mb1">Resume</h4>
+                <label class="mt3 fw4">Experience</label>
+                <textarea placeholder="Enter your experience" rows="3"></textarea>
+                <label class="mt3 fw4">Awards</label>
+                <textarea placeholder="Enter a list of your awards" rows="3"></textarea>
+                <label class="mt3 fw4">Education</label>
+                <textarea placeholder="Enter a schools and academic information" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="row mt3">
+            <button class="btn-primary grow">Save Profile</button>
+        </div>
+    </div>
+</body>
+
+</html>
