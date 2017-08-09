@@ -1,8 +1,0 @@
-showcaseme/__init__.py
-showcaseme/addmockdata.py
-showcaseme/views.py
-showcaseme.egg-info/PKG-INFO
-showcaseme.egg-info/SOURCES.txt
-showcaseme.egg-info/dependency_links.txt
-showcaseme.egg-info/requires.txt
-showcaseme.egg-info/top_level.txt
