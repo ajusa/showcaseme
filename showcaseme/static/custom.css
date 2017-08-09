@@ -30,6 +30,9 @@ button,
 	border-bottom-right-radius: 0px !important;
 	border-top-right-radius: 0px !important;
 }
+.no-right-border {
+	border-right-style: none !important;
+}
 .sharp-left-corners{
 	border-bottom-left-radius: 0px !important;
 	border-top-left-radius: 0px !important;
