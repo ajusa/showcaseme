@@ -11,9 +11,14 @@ input[type=text],
 input[type=url], 
 textarea,
 button,
+.btn,
 .card {
 	border-radius: 4px;
 }
 .chip {
 	border-radius: 2px;
+}
+
+.sharp-corners {
+	border-radius: 0px !important;
 }
