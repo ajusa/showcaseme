@@ -1,1 +1,1 @@
-{"users": {"1": {"id": "2p6g0rX4AlblQrvC7Pr73VA9y1K3", "name": "Jainil Shah"}}, "_default": {}, "listings": {}}
+{"listings": {}, "_default": {}, "users": {"1": {"id": "2p6g0rX4AlblQrvC7Pr73VA9y1K3", "profile": {"tags": [{"name": "Backend Development", "skill": 2}], "projects": [{"title": "Work Experience", "blurb": "Lead Worker", "description": "Hover over me to edit this paragraph. ShowcaseMe supports Markdown in the editing popup as well!"}], "name": "Jainil Shah", "blurb": "Maker and Worker"}, "name": "Jainil Shah"}}}

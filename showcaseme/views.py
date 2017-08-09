@@ -1,4 +1,5 @@
-from showcaseme import app, getUserData, login_manager, users, User, db, DEFAULT_PROFILE, TAGS
+from showcaseme import app, login_manager, users, db, DEFAULT_PROFILE, TAGS
+from showcaseme.models import User, getUserData
 from tinydb import TinyDB, Query
 from flask import Flask, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
@@ -23,7 +24,7 @@ def about():
 def signup():
 	return render_template('signup.html')
 @app.route("/login", methods=["GET", "POST"])
-def login():
+def login(): 
 	if request.method == 'POST':
 		uid = request.get_json()['uid']
 		if getUserData(uid): #Means that they have an account

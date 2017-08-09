@@ -1,5 +1,5 @@
 from flask import Flask, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
-from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user , current_user
+from flask_login import LoginManager, login_required, login_user, logout_user , current_user
 from tinydb import TinyDB, Query
 DEFAULT_PROFILE = {
 	"name": "John Doe",
@@ -46,17 +46,6 @@ app.config.update(DEBUG = True,SECRET_KEY = 'secret_xxx')
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
-def getUserData(id):
-	User = Query()
-	if users.search(User.id == id):
-		return users.search(User.id == id)[0]
-	else: 
-		return False
-#listings.insert({"company": "Microsoft", "position": "Web Dev", "description": "Empower every person and every organization on the planet to achieve more."})
-class User(UserMixin):
-	def __init__(self, uid):
-		self.id = uid
-		self.name = getUserData(uid)['name']
 
 #Server
 import showcaseme.views
