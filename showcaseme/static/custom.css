@@ -18,7 +18,11 @@ button,
 .chip {
 	border-radius: 2px;
 }
-
+.center-items {
+	display:flex;
+	justify-content:center;
+	align-items:center;
+}
 .sharp-corners {
 	border-radius: 0px !important;
 }
