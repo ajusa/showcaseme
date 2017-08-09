@@ -44,7 +44,7 @@
             </div>
         </div>
     </div>
-    [% if current_user.is_authenticated %]
+    [% if current_user.is_authenticated and current_user.id == id %]
     <button class="btn-primary mt2" v-if="edit" @click="saveProfile">Save Profile</button>
     <button class="btn-primary mt2" v-else @click="edit = true">Edit Profile</button>
     [% endif %]

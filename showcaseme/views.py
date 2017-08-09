@@ -15,7 +15,7 @@ def home():
 def viewUser(id):
 	user = getUserData(id)
 	if 'profile' in user:
-		return render_template('profile.html', data = user['profile'], tag = TAGS)
+		return render_template('profile.html', data = user['profile'], tag = TAGS, id=id)
 	return render_template('profile.html')
 @app.route('/about')
 def about():
@@ -55,10 +55,10 @@ def profile():
 	else:
 		user = getUserData(current_user.id)
 		if 'profile' in user :
-			return render_template('profile.html', data = user['profile'], tag = TAGS)
+			return render_template('profile.html', data = user['profile'], tag = TAGS, id=current_user.id)
 		else:
 			DEFAULT_PROFILE['name'] = current_user.name
-			return render_template('profile.html', data = DEFAULT_PROFILE, tag = TAGS)
+			return render_template('profile.html', data = DEFAULT_PROFILE, tag = TAGS, id=current_user.id)
 # handle login failed
 @app.errorhandler(401)
 def page_not_found(e):
