@@ -25,7 +25,7 @@ DEFAULT_LISTING = {
 		"requirements": {"CAD": 2, "Leadership": 2, "C++": 1, "Public Speaking": 0},
 		"bonus_reqs": {"Python": 2, "Java": 1},
 		"compensation": "335k salary with sizeable bonuses. Perks include free food and state-of-the-art insurance."
-	  }
+	  } 
 TAGS = lines = open("tags.txt").read().splitlines()
 class CustomFlask(Flask):
 	jinja_options = Flask.jinja_options.copy()
