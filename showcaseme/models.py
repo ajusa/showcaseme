@@ -9,16 +9,7 @@ def getUserData(id):
 		return False
 #listings.insert({"company": "Microsoft", "position": "Web Dev", "description": "Empower every person and every organization on the planet to achieve more."})
 class User(UserMixin):
-	def __init__(self, uid):
+	def __init__(self, uid, user_type='student'):
 		self.id = uid
+		self.userType = user_type
 		self.name = getUserData(uid)['name']
-def getCompanyData(id):
-	company = Query()
-	if companies.search(company.id == id):
-		return companies.search(company.id == id)[0]
-	else: 
-		return False
-class Company(UserMixin):
-	def __init__(self, uid):
-		self.id = uid
-		self.name = getCompanyData(uid)['name']
