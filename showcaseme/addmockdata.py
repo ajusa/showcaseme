@@ -1,7 +1,7 @@
 import json
 from tinydb import TinyDB
 from flask import jsonify
-db = TinyDB('main.db')
+db = TinyDB('../main.db')
 listings = db.table('listings')
 users = db.table('users')
 def addMockdata():
