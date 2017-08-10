@@ -15,15 +15,20 @@ DEFAULT_PROFILE = {
 }
 DEFAULT_COMPANY = {
 	"name": "ACME widget corp",
-	"company_desc": "Makes widgets",
+	"blurb": "Hover over me to edit this paragraph. ShowcaseMe supports Markdown in the editing popup as well!",
 	"listings": []
 }
 DEFAULT_LISTING = {
 		"title": "Lead Widget Designer",
-		"blurb": "Lead a team of 8 widget designers",
 		"description": "Hover over me to edit this paragraph. ShowcaseMe supports Markdown in the editing popup as well!",
-		"requirements": {"CAD": 2, "Leadership": 2, "C++": 1, "Public Speaking": 0},
-		"bonus_reqs": {"Python": 2, "Java": 1},
+		"requirements": [
+			{"name":"Python", "skill":2}, 
+			{"name":"C++", "skill":1},
+			{"name":"Web Development", "skill":0}
+		],
+		"bonus_reqs": [
+		{"name":"Backend Development", "skill":1}
+		],
 		"compensation": "335k salary with sizeable bonuses. Perks include free food and state-of-the-art insurance."
 	  } 
 TAGS = lines = open("tags.txt").read().splitlines()
