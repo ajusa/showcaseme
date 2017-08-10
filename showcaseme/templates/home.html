@@ -9,8 +9,25 @@
                 <div class="p3">
                     <button class="mb2 center">I'm with a company</button>
                     <h4>Search for students near you</h4>
-                    <input type="text" placeholder="Start searching...">
-                    <button class="btn-primary mt2">Search</button>
+                    <span class="m1 mv2 dib" v-for="(tag, index) in selectedTags.slice().sort(function(a, b){return b.skill - a.skill})">
+                    <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
+                        {{tag.name}}
+                        <i class="icon icon-arrow-up ml2 dim" v-if="tag.skill < 2" @click="tag.skill++"></i>
+                        <i class="icon icon-arrow-down ml2 dim" v-if="tag.skill > 0" @click="tag.skill--"></i>
+                        <i class="icon icon-cross ml2 dim" @click="removeTag(index)"></i>
+                    </label>
+                </span>
+            <div>
+            <button class="btn-primary mb2" v-if="selectedTags.length > 0">Search</button>
+                <input type="text" v-model="searchTerm" placeholder="Start typing to search">
+                <span class="m1 mv2 dib" v-for="(tag, index) in results">
+                    <label class="chip">
+                        {{tag.name}}
+                        <i class="icon icon-plus ml2" @click="addTag(index)"></i>
+                    </label>
+                </span>
+            </div>
+                    
                 </div>
             </div>
             <div class="six columns card">
@@ -44,7 +61,7 @@
 [% include 'footer.html' %]
 <link rel="stylesheet" type="text/css" href="[[url_for('static',filename='icons.min.css')]]">
 </body>
-<script src="[[url_for('static',filename='siema.min.js')]]"></script>
+<script src="[[url_for('static',filename='fuse.js')]]"></script>
 <script>
 function chunkArray(myArray, chunk_size) {
     var index = 0;
@@ -57,6 +74,13 @@ function chunkArray(myArray, chunk_size) {
 
     return tempArray;
 }
+function addTagState(tags) {
+    var arr = []
+    for (var i = tags.length - 1; i >= 0; i--) {
+        arr.push({ name: tags[i], skill: 0 })
+    }
+    return arr
+}
 </script>
 <script>
 var app = new Vue({
@@ -64,11 +88,36 @@ var app = new Vue({
     data: {
         students: chunkArray([[data | tojson]], 3),
         m: marked,
-    }
+        selectedTags: [],
+        searchTerm: '',
+        tags:  addTagState([[tags | tojson]])
+    },
+    methods:{
+        addTag: function(i) {
+            this.selectedTags.sort(function(a, b) { return b.skill - a.skill })
+            this.selectedTags.push(this.results[i])
+        },
+        removeTag: function(i) {
+            this.selectedTags.sort(function(a, b) { return b.skill - a.skill })
+            this.selectedTags.splice(i, 1)
+        },
+    },
+    computed: {
+        results: function() {
+            var self = this;
+            var fuse = new Fuse(this.tags, {keys: ["name"]});
+            var arr = fuse.search(this.searchTerm)
+            var temp = []
+            for (var i = this.selectedTags.length - 1; i >= 0; i--) { //this bit of code is to avoid adding duplicates.
+                temp.push(this.selectedTags[i].name)
+            }
+            arr = arr.filter(function(val) {
+                return temp.indexOf(val.name) == -1;
+            })
+            return arr
+        },
+    },
 })
-slider = new Siema();
-document.querySelector('#left').addEventListener('click', () => slider.prev());
-document.querySelector('#right').addEventListener('click', () => slider.next());
 </script>
 
 </html>

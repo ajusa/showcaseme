@@ -10,7 +10,7 @@ def home():
 		if 'profile' in item:
 			item['profile']['id'] = item['id']
 			temp.append(item['profile'])
-	return render_template('home.html', data=temp)
+	return render_template('home.html', data=temp, tags = TAGS)
 @app.route('/student/<id>')
 def viewUser(id):
 	user = getUserData(id)
