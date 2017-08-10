@@ -1,31 +1,27 @@
  [% include 'head.html' %]
 <div class="container mt4" id="app">
     <div class="row mt4 pt4">
-        <div class="six columns bg-blue center-items mb4 border-right" style="flex-flow: wrap; margin-left: 2%;">
-            <div class="center-items" style="width: 100%;">
-                 <button class="btn-lg btn-purple mw5 w-100 mt5 mb4">I'm with a company</button>
+        <div class="mb4">
+            <span class="blue f3 b">Showcase</span><span class="purple f3 b">Me</span>
+        </div>
+        <div class="row cf">
+            <div class="six columns card">
+                <div class="p3">
+                    <button class="mb2 center">I'm with a company</button>
+                    <h4>Search for students near you</h4>
+                    <input type="text" placeholder="Start searching...">
+                    <button class="btn-primary mt2">Search</button>
+                </div>
             </div>
-            <div>
-                <h4 class="mt4 pt4 near-white">Search for students near you...</h4>
-                <div class="mb4 pb3" style="display: inline-flex;">
-                    <input class="search-bar f6 no-right-border sharp-right-corners" type="text" placeholder="web designer" />
-                    <button class="btn-lg btn-solid-purple mw4 w-100 search-bar sharp-left-corners">Search</button>
+            <div class="six columns card">
+                <div class="p3">
+                    <button class="mb2 center">I'm a student</button>
+                    <h4>Search for listings near you</h4>
+                    <input type="text" placeholder="Start searching...">
+                    <button class="btn-primary mt2">Search</button>
                 </div>
             </div>
         </div>
-        <div class="six columns bg-light-purple center-items mb4 border-left" style="flex-flow: wrap;">
-            <div class="center-items" style="width: 100%;">
-                 <button class="btn-lg btn mw5 w-100 mt5 mb4">I'm a student</button>
-            </div>
-            <div>
-                <h4 class="mt4 pt4 near-white">Search for listings near you...</h4>
-                <div class="mb4 pb3" style="display: inline-flex;">
-                    <input class="search-bar f6 no-right-border sharp-right-corners" type="text" placeholder="web design" />
-                    <button class="btn-lg btn-primary mw4 w-100 search-bar sharp-left-corners">Search</button>
-                </div>
-            </div>
-        </div>
-        
         <h3 class="mt3 pt3">Or, browse our featured students:</h3>
         <div class="row cf" v-for="row in students">
             <div class="four columns mv3" v-for="student in row">
