@@ -6,7 +6,7 @@ def getUserData(id):
 	User = Query()
 	if users.search(User.id == id):
 		return users.search(User.id == id)[0]
-	else: 
+	else:
 		return False
 
 class User(UserMixin):

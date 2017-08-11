@@ -3,6 +3,7 @@ from showcaseme.models import User, getUserData, userSearch
 from tinydb import TinyDB, Query
 from flask import Flask, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
+from collections import Counter
 @app.route('/')
 def home():
 	temp = []
@@ -63,11 +64,11 @@ def profile():
 @app.route("/search", methods=["GET"])
 def search():
 	found = userSearch(request.args)
-	foundSorted = sorted(found, key=found.get, reverse=True)
+	foundSorted = list(Counter(found).most_common())
 	#print(request.args)
 	#print([getUserData(user)['profile'] for user in sorted(found, key=found.get, reverse=True) if 'profile' in getUserData(user)])
-	return render_template('search.html', data = [getUserData(user)['profile'] for user in foundSorted if 'profile' in getUserData(user)], 
-		matches=[found[user] for user in foundSorted if 'profile' in getUserData(user)], tags = TAGS)
+	return render_template('search.html', data = [dict(getUserData(user[0])['profile'].items() + {'id': getUserData(user[0])['id']}.items()) for user in foundSorted if (getUserData(user[0]) and 'profile' in getUserData(user[0]))], 
+		matches=[found[user[0]] for user in foundSorted if (getUserData(user[0]) and 'profile' in getUserData(user[0]))], tags = TAGS)
 
 # handle login failed
 @app.errorhandler(401)
@@ -78,3 +79,4 @@ def page_not_found(e):
 def load_user(userid):
 	if getUserData(userid):
 		return User(userid)
+
