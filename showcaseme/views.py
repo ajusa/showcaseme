@@ -1,5 +1,5 @@
 from showcaseme import app, login_manager, users, db, DEFAULT_PROFILE, TAGS
-from showcaseme.models import User, getUserData
+from showcaseme.models import User, getUserData, userSearch
 from tinydb import TinyDB, Query
 from flask import Flask, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
@@ -54,11 +54,19 @@ def profile():
 		return jsonify(result='ok')
 	else:
 		user = getUserData(current_user.id)
-		if 'profile' in user :
+		if 'profile' in user:
 			return render_template('profile.html', data = user['profile'], tag = TAGS, id=current_user.id)
 		else:
 			DEFAULT_PROFILE['name'] = current_user.name
 			return render_template('profile.html', data = DEFAULT_PROFILE, tag = TAGS, id=current_user.id)
+
+@app.route("/search", methods=["GET"])
+def search():
+	found = userSearch(request.args)
+	print(request.args)
+	#print([getUserData(user)['profile'] for user in sorted(found, key=found.get, reverse=True) if 'profile' in getUserData(user)])
+	return render_template('search.html', data = [getUserData(user)['profile'] for user in sorted(found, key=found.get, reverse=True) if 'profile' in getUserData(user)], tags = TAGS)
+
 # handle login failed
 @app.errorhandler(401)
 def page_not_found(e):

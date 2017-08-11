@@ -1,0 +1,88 @@
+ [% include 'head.html' %]
+<div class="container mt4" id="app">
+    <div class="row mt4 pt4">
+        <div class="mb4">
+            <span class="blue f3 b">Showcase</span><span class="purple f3 b">Me</span>
+        </div>
+        <h3 class="mt3 pt3">Search Results: </h3>
+        <div class="row cf" v-for="row in students">
+            <div class="four columns mv3" v-for="student in row">
+                <div class="card">
+                    <div class="p3">
+                        <h4 class="mb1" v-html="m(student.name)"></h4>
+                        <p class="silver" v-html="m(student.blurb)"></p>
+                        <span class="m1 mv2 dib" v-for="tag in student.tags.slice().sort(function(a, b){return b.skill - a.skill})">
+                            <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
+                                {{tag.name}}
+                            </label>
+                        </span>
+                        <a class="btn mt3 w-100" :href="'/student/' + student.id">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+[% include 'footer.html' %]
+<link rel="stylesheet" type="text/css" href="[[url_for('static',filename='icons.min.css')]]">
+</body>
+<script src="[[url_for('static',filename='fuse.js')]]"></script>
+<script>
+function chunkArray(myArray, chunk_size) {
+    var index = 0;
+    var arrayLength = myArray.length;
+    var tempArray = [];
+    for (index = 0; index < arrayLength; index += chunk_size) {
+        myChunk = myArray.slice(index, index + chunk_size);
+        tempArray.push(myChunk);
+    }
+
+    return tempArray;
+}
+function addTagState(tags) {
+    var arr = []
+    for (var i = tags.length - 1; i >= 0; i--) {
+        arr.push({ name: tags[i], skill: 0 })
+    }
+    return arr
+}
+</script>
+<script>
+var app = new Vue({
+    el: '#app',
+    data: {
+        students: chunkArray([[data | tojson]], 3),
+        m: marked,
+        selectedTags: [],
+        searchTerm: '',
+        tags:  addTagState([[tags | tojson]])
+    },
+    methods:{
+        addTag: function(i) {
+            this.selectedTags.sort(function(a, b) { return b.skill - a.skill })
+            this.selectedTags.push(this.results[i])
+        },
+        removeTag: function(i) {
+            this.selectedTags.sort(function(a, b) { return b.skill - a.skill })
+            this.selectedTags.splice(i, 1)
+        },
+    },
+    computed: {
+        results: function() {
+            var self = this;
+            var fuse = new Fuse(this.tags, {keys: ["name"]});
+            var arr = fuse.search(this.searchTerm)
+            var temp = []
+            for (var i = this.selectedTags.length - 1; i >= 0; i--) { //this bit of code is to avoid adding duplicates.
+                temp.push(this.selectedTags[i].name)
+            }
+            arr = arr.filter(function(val) {
+                return temp.indexOf(val.name) == -1;
+            })
+            return arr
+        },
+    },
+})
+</script>
+
+</html>
