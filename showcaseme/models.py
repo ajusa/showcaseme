@@ -1,6 +1,7 @@
 from showcaseme import users
 from flask_login import UserMixin
 from tinydb import Query
+from collections import Counter
 def getUserData(id):
 	User = Query()
 	if users.search(User.id == id):
@@ -9,22 +10,23 @@ def getUserData(id):
 		return False
 
 class User(UserMixin):
-	def __init__(self, uid, user_type='student'):
+	def __init__(self, uid, user_type=''):
 		self.id = uid
 		self.userType = user_type
 		self.name = getUserData(uid)['name']
 
 #returns a dictionary {userID: matchPercent} where match is a decimal betweeon 0.0 and 1.0, where 1.0 is a perfect match and 0.0 is a total miss. Only returns users that are above a certain threshold
-def userSearch(requirements, bonusReqs=[], requirementWeight=1.0, bonusWeight=0.5, threshold=0.3):
+def userSearch(requirements, bonusReqs=[], requirementWeight=1.0, bonusWeight=0.5, threshold=0.3, limit=0):
 	foundUsers = {}
 	requirements = {key: int(requirements[key]) for key in requirements}
 	bonusReqs = {key: int(bonusReqs[key]) for key in bonusReqs}
+	maxPoints = requirementWeight * sum([1+val for val in requirements.values()]) + bonusWeight * sum([1+val for val in bonusReqs.values()])
 	for user in users.all():
+		if not maxPoints:
+			foundUsers = {user['id']: 1.0 for user in users.all()}
+			break
 		points = 0.0
 		userTags = {tag['name']: tag['skill'] for tag in user['profile']['tags']}
-		maxPoints = requirementWeight * sum([1+val for val in requirements.values()]) + bonusWeight * sum([1+val for val in bonusReqs.values()])
-		if not maxPoints:
-			return {}
 		for tag in userTags.keys():
 			if tag in requirements:
 				if userTags[tag] > requirements[tag]:
@@ -38,4 +40,6 @@ def userSearch(requirements, bonusReqs=[], requirementWeight=1.0, bonusWeight=0.
 					points += bonusWeight * (1+userTags[tag])
 		if points/maxPoints >= threshold:
 			foundUsers[user['id']] = points/maxPoints
+	if limit:
+		foundUsers = dict(Counter(foundUsers).most_common(limit))
 	return foundUsers
