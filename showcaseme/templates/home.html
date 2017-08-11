@@ -19,7 +19,7 @@
                 </span>
             <div>
             <button class="btn-primary mb2" v-if="selectedTags.length > 0" @click="search">Search</button>
-                <input type="text" v-model="searchTerm" placeholder="Start typing to search">
+                <input type="text" v-model="searchTerm" placeholder="Start typing to search" @keyup.enter="addTag(0)">
                 <span class="m1 mv2 dib" v-for="(tag, index) in results">
                     <label class="chip">
                         {{tag.name}}
@@ -94,8 +94,10 @@ var app = new Vue({
     },
     methods:{
         addTag: function(i) {
-            this.selectedTags.sort(function(a, b) { return b.skill - a.skill })
-            this.selectedTags.push(this.results[i])
+            if(this.searchTerm.length > 0 && this.results.length > 0){
+                this.selectedTags.sort(function(a, b) { return b.skill - a.skill })
+                this.selectedTags.push(this.results[i])
+            }
         },
         removeTag: function(i) {
             this.selectedTags.sort(function(a, b) { return b.skill - a.skill })
