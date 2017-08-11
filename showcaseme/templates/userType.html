@@ -2,7 +2,7 @@
 <div class="container mt3">
     <h3>Select your account type</h3>
     <p>This is permanent, so make sure you know what you are doing!</p>
-    <div class="row cf">
+    <div class="row cf" id="app">
         <div class="six columns">
             <div class="ba b-blue blue br3">
                 <div class="p3">
@@ -13,7 +13,7 @@
                         <li>The ability to create and edit listings</li>
                         <li>I don't know, do cool stuff? Mihir help with wording, k thx</li>
                     </ul>
-                    <span class="bg-blue dim pv3 ph4 center w-100 tc white hand br2">I am a company</span>
+                    <span class="bg-blue dim pv3 ph4 center w-100 tc white hand br2" @click="company">I am a company</span>
                 </div>
             </div>
         </div>
@@ -27,11 +27,28 @@
                         <li>The ability to create and edit your profile</li>
                         <li>I don't know, do cool stuff? Mihir help with wording, k thx</li>
                     </ul>
-                     <span class="bg-purple dim pv3 ph4 center w-100 tc white hand br2">I am a student</span>
+                     <span class="bg-purple dim pv3 ph4 center w-100 tc white hand br2" @click="student">I am a student</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    var app = new Vue({
+    el: "#app",
+    methods: {
+        company: function() {
+            app.$http.post('/usertype', {userType: 'company'}).then(function(resp) {
+                window.location.href = "/"
+            });
+        },
+        student: function(i) {
+            app.$http.post('/usertype', {userType: 'student'}).then(function(resp) {
+                window.location.href = "/"
+            });
+        },
+    },
+})
+</script>
 [% include 'footer.html' %]
 </body>

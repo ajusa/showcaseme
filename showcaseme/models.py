@@ -12,7 +12,7 @@ def getUserData(id):
 class User(UserMixin):
 	def __init__(self, uid, user_type=''):
 		self.id = uid
-		self.userType = user_type
+		self.userType = getUserData(uid)['userType']
 		self.name = getUserData(uid)['name']
 
 #returns a dictionary {userID: matchPercent} where match is a decimal betweeon 0.0 and 1.0, where 1.0 is a perfect match and 0.0 is a total miss. Only returns users that are above a certain threshold

@@ -3,6 +3,14 @@ from showcaseme.models import User, getUserData, userSearch
 from tinydb import TinyDB, Query
 from flask import Flask, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
+from functools import wraps
+def usertype_required(f):		
+    @wraps(f)		
+    def decorated_function(*args, **kwargs):		
+        if current_user.is_authenticated and not current_user.userType:		
+            return redirect(url_for('userType', next=request.url))		
+        return f(*args, **kwargs)		
+    return decorated_function
 @app.route('/')
 def home():
 	temp = []
@@ -18,11 +26,20 @@ def viewUser(id):
 		return render_template('profile.html', data = user['profile'], tag = TAGS, id=id)
 	return render_template('profile.html')
 @app.route('/about')
+@usertype_required
 def about():
 	return render_template('about.html')
-@app.route('/usertype')
+
+@app.route('/usertype', methods=["GET", "POST"])
 def userType():
-	return render_template('userType.html')
+	if request.method == "POST": #The user is setting their datatype
+		User = Query()
+		users.update({'userType': request.get_json()['userType']}, User.id == current_user.id)
+		user = User(uid)
+		login_user(user)
+		return jsonify(result = 'ok')
+	else: #Their usertype has not been set
+		return render_template('userType.html')
 @app.route("/signup", methods=["GET"])
 def signup():
 	return render_template('signup.html')
@@ -33,12 +50,18 @@ def login():
 		if getUserData(uid): #Means that they have an account
 			user = User(uid)
 			login_user(user)
-			return jsonify(result='ok')
+			if current_user.is_authenticated and not current_user.userType:	
+				return jsonify(result='bad')
+			else:
+				return jsonify(result='ok')
 		else: #Means that this is their first time with us
-			users.insert({'name': request.get_json()['name'], 'id': uid})
-			user = User(uid)
-			login_user(user)
-			return jsonify(result='ok')
+				users.insert({'name': request.get_json()['name'], 'id': uid})
+				user = User(uid)
+				login_user(user)
+				if current_user.is_authenticated and not current_user.userType:	
+					return jsonify(result='bad')	
+				else:
+					return jsonify(result='ok')
 	else: #The login page for the form
 		return render_template('login.html')
 

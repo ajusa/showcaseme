@@ -47,7 +47,11 @@ var app = new Vue({
                     name: user.displayName
                 }).then(function(resp) {
                     firebase.auth().signOut().then(function() {}, function(error) {});
-                    window.location.replace("/")
+                    if (resp.body.result != 'ok') {
+                        window.location.replace("/usertype")
+                    } else{
+                        window.location.replace("/")
+                    }
                 });
             }
         });
@@ -55,22 +59,23 @@ var app = new Vue({
     methods: {
         login: function() {
             firebase.auth().signInWithEmailAndPassword(this.email, this.password).catch(function(error) {
-                var errorCode = error.code;
+                /*var errorCode = error.code;
                 var errorMessage = error.message;
-                alert("Error: " + error.message)
+                alert("Error: " + error.message)*/
             });
         },
         withGoogle: function() {
             firebase.auth().signInWithPopup(google).then(function(result) {
-                var user = result.user;
+                /*var user = result.user;
                 console.log(user)
                 app.$http.post('/login', {
                     uid: user.uid,
                     name: user.displayName
                 }).then(function(resp) {
                     firebase.auth().signOut().then(function() {}, function(error) {});
-                    window.location.replace("/")
-                });
+                    console.log(resp.body)
+                    //window.location.replace("/")
+                });*/
                 // ...
             }).catch(function(error) {});
         }
