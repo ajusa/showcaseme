@@ -63,9 +63,11 @@ def profile():
 @app.route("/search", methods=["GET"])
 def search():
 	found = userSearch(request.args)
-	print(request.args)
+	foundSorted = sorted(found, key=found.get, reverse=True)
+	#print(request.args)
 	#print([getUserData(user)['profile'] for user in sorted(found, key=found.get, reverse=True) if 'profile' in getUserData(user)])
-	return render_template('search.html', data = [getUserData(user)['profile'] for user in sorted(found, key=found.get, reverse=True) if 'profile' in getUserData(user)], tags = TAGS)
+	return render_template('search.html', data = [getUserData(user)['profile'] for user in foundSorted if 'profile' in getUserData(user)], 
+		matches=[found[user] for user in foundSorted if 'profile' in getUserData(user)], tags = TAGS)
 
 # handle login failed
 @app.errorhandler(401)
