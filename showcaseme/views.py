@@ -21,6 +21,9 @@ def viewUser(id):
 @app.route('/about')
 def about():
 	return render_template('about.html')
+@app.route('/usertype')
+def userType():
+	return render_template('userType.html')
 @app.route("/signup", methods=["GET"])
 def signup():
 	return render_template('signup.html')
