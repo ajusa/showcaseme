@@ -21,9 +21,13 @@ def viewUser(id):
 @app.route('/about')
 def about():
 	return render_template('about.html')
-@app.route('/usertype')
+@app.route('/usertype', methods=["GET", "POST"])
 def userType():
-	return render_template('userType.html')
+	if request.method == "POST": #The user is setting their datatype
+		User = Query()
+		users.update({'userType': request.get_json()['userType']}, User.id == current_user.id)
+	else: #Their usertype has not been set
+		return render_template('userType.html')
 @app.route("/signup", methods=["GET"])
 def signup():
 	return render_template('signup.html')
@@ -36,7 +40,7 @@ def login():
 			login_user(user)
 			return jsonify(result='ok')
 		else: #Means that this is their first time with us
-			users.insert({'name': request.get_json()['name'], 'id': uid})
+			users.insert({'name': request.get_json()['name'], 'id': uid, 'userType':''})
 			user = User(uid)
 			login_user(user)
 			return jsonify(result='ok')
