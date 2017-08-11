@@ -18,7 +18,7 @@
                     </label>
                 </span>
             <div>
-            <button class="btn-primary mb2" v-if="selectedTags.length > 0">Search</button>
+            <button class="btn-primary mb2" v-if="selectedTags.length > 0" @click="search">Search</button>
                 <input type="text" v-model="searchTerm" placeholder="Start typing to search">
                 <span class="m1 mv2 dib" v-for="(tag, index) in results">
                     <label class="chip">
@@ -101,6 +101,13 @@ var app = new Vue({
             this.selectedTags.sort(function(a, b) { return b.skill - a.skill })
             this.selectedTags.splice(i, 1)
         },
+        search: function(){
+            queryString = ""
+            for (var i = this.selectedTags.length - 1; i >= 0; i--) {
+                queryString += encodeURIComponent(this.selectedTags[i].name) + '=' + this.selectedTags[i].skill + "&"
+            }
+            window.location.href = "/search?" + queryString;
+        }
     },
     computed: {
         results: function() {
