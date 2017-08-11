@@ -29,6 +29,8 @@ def userSearch(requirements, bonusReqs=[], requirementWeight=1.0, bonusWeight=0.
 			foundUsers = {user['id']: 1.0 for user in users.all()}
 			break
 		points = 0.0
+		if not 'profile' in user:
+			continue
 		userTags = {tag['name']: tag['skill'] for tag in user['profile']['tags']}
 		for tag in userTags.keys():
 			if tag in requirements:
