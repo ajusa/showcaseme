@@ -33,9 +33,9 @@ def about():
 @app.route('/usertype', methods=["GET", "POST"])
 def userType():
 	if request.method == "POST": #The user is setting their datatype
-		User = Query()
-		users.update({'userType': request.get_json()['userType']}, User.id == current_user.id)
-		user = User(uid)
+		u = Query()
+		users.update({'userType': request.get_json()['userType']}, u.id == current_user.id)
+		user = User(current_user.id)
 		login_user(user)
 		return jsonify(result = 'ok')
 	else: #Their usertype has not been set
