@@ -4,20 +4,22 @@
         <div class="seven columns mt2">
             <div class="card">
                 <div class="p3">
-                    <fancy-input v-model="listing.name" :edit="edit">
-                        <h2 v-html="m(listing.name)"></h2></fancy-input>
+                    <fancy-input v-model="listing.title" :edit="edit">
+                        <h3 v-html="m(listing.title)"></h3></fancy-input>
                     <fancy-input v-model="listing.blurb" :edit="edit">
-                        <p v-html="m(listing.blurb)"></p>
+                        <p class="silver" v-html="m(listing.blurb)"></p>
                     </fancy-input>
+                    <h5>Required Skills</h5>
                     <fancy-input v-model="listing.description" :edit="edit">
                         <div v-html="m(listing.description)"></div>
                     </fancy-input>
+
                 </div>
             </div>
         </div>
         <div class="five columns mt2">
             <h3>Skills</h3>
-            <span class="m1 mv2 dib" v-for="(tag, index) in user.tags.slice().sort(function(a, b){return b.skill - a.skill})">
+            <span class="m1 mv2 dib" v-for="(tag, index) in listing.tags.slice().sort(function(a, b){return b.skill - a.skill})">
                     <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
                         {{tag.name}}
                         <i class="icon icon-arrow-up ml2 dim" v-if="edit && tag.skill < 2" @click="tag.skill++"></i>
@@ -110,18 +112,18 @@ var app = new Vue({
     methods: {
         saveProfile: function() {
             this.edit = false;
-            this.user.tags.sort(function(a, b) { return b.skill - a.skill })
-            app.$http.post('/profile', this.user).then(function(resp) {
+            this.listing.tags.sort(function(a, b) { return b.skill - a.skill })
+            app.$http.post('/profile', this.listing).then(function(resp) {
                 swal("", "Profile has been saved!", "success")
             });
         },
         addTag: function(i) {
-            this.user.tags.sort(function(a, b) { return b.skill - a.skill })
-            this.user.tags.push(this.results[i])
+            this.listing.tags.sort(function(a, b) { return b.skill - a.skill })
+            this.listing.tags.push(this.results[i])
         },
         removeTag: function(i) {
-            this.user.tags.sort(function(a, b) { return b.skill - a.skill })
-            this.user.tags.splice(i, 1)
+            this.listing.tags.sort(function(a, b) { return b.skill - a.skill })
+            this.listing.tags.splice(i, 1)
         },
     },
     computed: {
@@ -130,8 +132,8 @@ var app = new Vue({
             var fuse = new Fuse(this.tags, { keys: ["name"] });
             var arr = fuse.search(this.searchTerm)
             var temp = []
-            for (var i = this.user.tags.length - 1; i >= 0; i--) { //this bit of code is to avoid adding duplicates.
-                temp.push(this.user.tags[i].name)
+            for (var i = this.listing.tags.length - 1; i >= 0; i--) { //this bit of code is to avoid adding duplicates.
+                temp.push(this.listing.tags[i].name)
             }
             arr = arr.filter(function(val) {
                 return temp.indexOf(val.name) == -1;
