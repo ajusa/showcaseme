@@ -94,7 +94,7 @@ def search():
 	#print(request.args)
 	#print([getUserData(user)['profile'] for user in sorted(found, key=found.get, reverse=True) if 'profile' in getUserData(user)])
 	return render_template('search.html', data = [dict(getUserData(user[0])['profile'].items() + {'id': getUserData(user[0])['id']}.items() + 
-		{'match': round(found[user[0]]*100)}.items()) for user in foundSorted if (getUserData(user[0]) and 'profile' in getUserData(user[0]))], tags = TAGS)
+		{'match': found[user[0]]}.items()) for user in foundSorted if (getUserData(user[0]) and 'profile' in getUserData(user[0]))], tags = TAGS)
 
 # handle login failed
 @app.errorhandler(401)

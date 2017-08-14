@@ -7,14 +7,14 @@
         <h3 class="mt3 pt3">Search Results: </h3>
         <div class="row cf" v-for="row in students">
             <div class="four columns mv3" v-for="student in row">
-                <div class="card">
+                <div class="card" v-bind:style="'background-color:' + getColor(student.match)">
                     <div class="p3">
                     	<div class="row cf mb1">
                     		<div class="seven columns">
                     			<h4>{{student.name}}</h4>
                     		</div>
 							<div class="five columns">
-								<h5>{{student.match}}% match</h5>
+								<h5>{{Math.round(student.match*100)}}% match</h5>
 							</div>
 							<p class="silver twelve columns" v-html="m(student.blurb)"></p>
 						<div class="twelve columns">
@@ -77,6 +77,11 @@ var app = new Vue({
             this.selectedTags.sort(function(a, b) { return b.skill - a.skill })
             this.selectedTags.splice(i, 1)
         },
+        getColor: function(value){
+    		//value from 0 to 1
+    		var hue=(((value-0.3)/0.7)*120).toString(10);
+    		return ["hsl(",hue,",100%,90%)"].join("");
+		}
     },
     computed: {
         results: function() {
