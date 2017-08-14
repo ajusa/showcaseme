@@ -8,7 +8,7 @@
             <div class="six columns card mv2">
                 <div class="p3">
                     [% if not current_user.is_authenticated %]
-                    <button class="mb3 center" onclick="location.href='/login'">I'm with a company</button>
+                    <button class="mb4 mt3 center" onclick="location.href='/login'">I'm with a company</button>
                     [% endif %]
                     <h4>Search for students near you</h4>
                     <span class="m1 mv2 dib" v-for="(tag, index) in selectedTags.slice().sort(function(a, b){return b.skill - a.skill})">
@@ -20,7 +20,7 @@
                     </label>
                 </span>
             <div>
-            <button class="btn-primary mb2" v-if="selectedTags.length > 0" @click="search">Search</button>
+            <button class="btn-primary mb4 mt3" v-if="selectedTags.length > 0" @click="search">Search</button>
                 <input type="text" v-model="searchTerm" placeholder="Start typing to search" @keyup.enter="addTag(0)">
                 <span class="m1 mv2 dib" v-for="(tag, index) in results">
                     <label class="chip">
