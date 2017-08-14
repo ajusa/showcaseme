@@ -1,27 +1,19 @@
 [% include 'head.html' %]
-<main class="container mt4">
+<main class="container mt4" id="app">
     <div class="row mt2 cf">
         <div class="seven columns mt2">
-            <fancy-input v-model="user.name" :edit="edit">
-                <h2 v-html="m(user.name)"></h2></fancy-input>
-            <fancy-input v-model="user.blurb" :edit="edit">
-                <p v-html="m(user.blurb)"></p>
-            </fancy-input>
-            <h3>Featured Projects</h3>
-            <div class="card mv3" v-for="(project, index) in user.projects">
+            <div class="card">
                 <div class="p3">
-                    <fancy-input v-model="project.title" :edit="edit">
-                        <h4 class="mb1" v-html="m(project.title)"></h4></fancy-input>
-                    <fancy-input v-model="project.blurb" :edit="edit">
-                        <p class="silver" v-html="m(project.blurb)"></p>
+                    <fancy-input v-model="listing.name" :edit="edit">
+                        <h2 v-html="m(listing.name)"></h2></fancy-input>
+                    <fancy-input v-model="listing.blurb" :edit="edit">
+                        <p v-html="m(listing.blurb)"></p>
                     </fancy-input>
-                    <fancy-input v-model="project.description" :edit="edit">
-                        <div v-html="m(project.description)"></div>
+                    <fancy-input v-model="listing.description" :edit="edit">
+                        <div v-html="m(listing.description)"></div>
                     </fancy-input>
-                    <button v-if="edit" @click="user.projects.splice(index, 1)">Delete Project</button>
                 </div>
             </div>
-            <button class="btn-primary mv3 w-100" v-if="edit" @click="user.projects.push(JSON.parse(JSON.stringify(exampleProj)))">Add Project</button>
         </div>
         <div class="five columns mt2">
             <h3>Skills</h3>
@@ -50,7 +42,6 @@
 <script src="[[url_for('static',filename='autosize.min.js')]]"></script>
 <script src="[[url_for('static',filename='fuse.js')]]"></script>
 <link rel="stylesheet" href="[[url_for('static',filename='icons.min.css')]]">
-
 <script>
 Vue.directive('autosize', {
     bind: function(el, binding) {
@@ -104,11 +95,12 @@ Vue.component('fancyInput', {
 var app = new Vue({
     el: "#app",
     created: function() {
-        this.$set(this.user, 'tags', this.user.tags || [])
+        this.$set(this.listing, 'tags', this.listing.tags || [])
     },
     data: {
         edit: false,
         m: marked,
+        listing: {title: "Lead Engineer", blurb: "Microsoft", description:"Do things and make money"},
         //
         tags: addTagState([[tag | tojson]]),
         exampleProj: { title: "Example Title", blurb: "Intern", description: "Helped manage systems and distributed analysis of plugins relating to wordpress. Performed statistical analysis on multiple datasets using flareon architecture." },
@@ -135,7 +127,7 @@ var app = new Vue({
     computed: {
         results: function() {
             var self = this;
-            var fuse = new Fuse(this.tags, {keys: ["name"]});
+            var fuse = new Fuse(this.tags, { keys: ["name"] });
             var arr = fuse.search(this.searchTerm)
             var temp = []
             for (var i = this.user.tags.length - 1; i >= 0; i--) { //this bit of code is to avoid adding duplicates.
