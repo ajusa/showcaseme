@@ -28,7 +28,7 @@
         <section class="fr">
                 [% if not current_user.is_authenticated %]
                 <a href="/login" class="btn btn-link">Login<a> <a href="/signup" class="btn btn-link b">Sign Up</a> [% endif %] [% if current_user.is_authenticated %]
-                <span class="btn btn-link"> <span class="gray">Hi <b>[[ current_user.name ]]</b></span></span>
+                <a href="/profile"><span class="btn btn-link"> <span class="gray">Hi <b>[[ current_user.name ]]</b></span></span></a>
                 <a href="/logout" class="btn btn-link">Logout</a> [% endif %]
         </section>
     </header>
