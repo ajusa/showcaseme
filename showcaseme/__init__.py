@@ -47,6 +47,14 @@ listings = db.table('listings')
 users = db.table('users')
 app = CustomFlask(__name__)
 app.config.update(DEBUG = True,SECRET_KEY = 'secret_xxx')
+app.config.update(
+    MAIL_SERVER='smtp@gmail.com',
+    MAIL_PORT = 465,
+	MAIL_USE_SSL = True,
+    MAIL_USERNAME = 'showcaseme.xyz@gmail.com',
+    MAIL_PASSWORD = 'showcasemexyz123'
+)
+mail = Mail(app)
 # flask-login
 login_manager = LoginManager()
 login_manager.init_app(app)

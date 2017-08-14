@@ -1,5 +1,5 @@
-from showcaseme import app, login_manager, users, db, DEFAULT_PROFILE, TAGS
-from showcaseme.models import User, getUserData, userSearch
+from showcaseme import app, login_manager, users, db, DEFAULT_PROFILE, TAGS, mail#,listings
+from showcaseme.models import User, getUserData, userSearch#, listingSearch
 from tinydb import TinyDB, Query
 from flask import Flask, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
@@ -99,6 +99,27 @@ def search():
 	#print([getUserData(user)['profile'] for user in sorted(found, key=found.get, reverse=True) if 'profile' in getUserData(user)])
 	return render_template('search.html', data = [dict(getUserData(user[0])['profile'].items() + {'id': getUserData(user[0])['id']}.items() + 
 		{'match': found[user[0]]}.items()) for user in foundSorted if (getUserData(user[0]) and 'profile' in getUserData(user[0]))], tags = TAGS)
+
+@app.route("/searchlistings", methods=["GET"])
+def searchListings():
+	found = listingSearch(request.args)
+	foundSorted = list(Counter(found).most_common())
+	#print(request.args)
+	#print([getUserData(user)['profile'] for user in sorted(found, key=found.get, reverse=True) if 'profile' in getUserData(user)])
+	return render_template('searchListings.html', data = [dict(getListingData(listing[0])['profile'].items() + {'id': getListingData(listing[0])['id']}.items() + 
+		{'match': found[listing[0]]}.items()) for listing in foundSorted if (getListingData(listing[0]) and 'profile' in getListingData(listing[0]))], tags = TAGS)
+
+@app.route('/send-mail/', methods=['GET', 'POST'])
+def send_mail():
+	if request.method == 'POST': #Sending the message
+		msg = request.get_json()
+	    mail.send_message(
+	        msg['subject'],
+	        sender=(current_user.name, "ARHAM FIREBASE EMAIL THINGY"),
+	        recipients=[getUserData(msg['target']) "ARHAM MORE EMAILS"],
+	        body=msg['body']
+	    )
+    return jsonify(result='ok')
 
 # handle login failed
 @app.errorhandler(401)
