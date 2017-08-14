@@ -5,9 +5,11 @@
             <span class="blue f3 b">Showcase</span><span class="purple f3 b">Me</span>
         </div>
         <div class="row cf">
-            <div class="six columns card">
+            <div class="six columns card mv2">
                 <div class="p3">
-                    <button class="mb2 center">I'm with a company</button>
+                    [% if not current_user.is_authenticated %]
+                    <button class="mb3 center" onclick="location.href='/login'">I'm with a company</button>
+                    [% endif %]
                     <h4>Search for students near you</h4>
                     <span class="m1 mv2 dib" v-for="(tag, index) in selectedTags.slice().sort(function(a, b){return b.skill - a.skill})">
                     <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
@@ -30,9 +32,11 @@
                     
                 </div>
             </div>
-            <div class="six columns card">
+            <div class="six columns card mv2">
                 <div class="p3">
-                    <button class="mb2 center">I'm a student</button>
+                     [% if not current_user.is_authenticated %]
+                    <button class="mb3 center" onclick="location.href='/login'">I'm a student</button>
+                    [% endif %]
                     <h4>Search for listings near you</h4>
                     <input type="text" placeholder="Start searching...">
                     <button class="btn-primary mt2">Search</button>

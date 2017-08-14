@@ -26,6 +26,10 @@ def viewUser(id):
 	if 'profile' in user:
 		return render_template('profile.html', data = user['profile'], tag = TAGS, id=id)
 	return render_template('profile.html')
+@app.route('/listing')
+@usertype_required
+def listing():
+	return render_template('listing.html', tag = TAGS)
 @app.route('/about')
 @usertype_required
 def about():
