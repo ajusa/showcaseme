@@ -5,9 +5,9 @@
             <span class="blue f3 b">Showcase</span><span class="purple f3 b">Me</span>
         </div>
         <h3 class="mt3 pt3">Search Results: </h3>
-        <div class="row cf" v-for="row in students">
-            <div class="four columns mv3" v-for="student in row">
-                <div class="card" v-bind:style="'background-color:' + getColor(student.match)">
+        <div class="row cf">
+            <div class="four columns" v-for="column in students">
+                <div class="card mv3" v-bind:style="'background-color:' + getColor(student.match)" v-for="student in column">
                     <div class="p3">
                     	<div class="row cf mb1">
                     		<div class="seven columns">
@@ -20,7 +20,7 @@
 						<div class="twelve columns">
 							<span class="m1 mv2 dib" v-for="tag in student.tags.slice().sort(function(a, b){return b.skill - a.skill})">
                             <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
-                                {{tag.name}}
+                                {{tag.name}} 
                             </label>
                         </span>
 						</div>
@@ -29,6 +29,7 @@
                 </div>
             </div>
         </div>
+        
     </div>
 </div>
 [% include 'footer.html' %]
@@ -37,14 +38,15 @@
 <script src="[[url_for('static',filename='fuse.js')]]"></script>
 <script>
 function chunkArray(myArray, chunk_size) {
-    var index = 0;
-    var arrayLength = myArray.length;
-    var tempArray = [];
-    for (index = 0; index < arrayLength; index += chunk_size) {
-        myChunk = myArray.slice(index, index + chunk_size);
-        tempArray.push(myChunk);
+    counter = chunk_size
+    tempArray = []
+    for (var i = 0; i < chunk_size; i++) {
+        tempArray.push([])
     }
-
+    for (var i = 0; i < myArray.length; i++) {
+        tempArray[counter % chunk_size].push(myArray[i])
+        counter++
+    }
     return tempArray;
 }
 function addTagState(tags) {
@@ -58,6 +60,7 @@ function addTagState(tags) {
 <script>
 var app = new Vue({
     el: '#app',
+
     data: {
         students: chunkArray([[data | tojson]], 3),
         m: marked,
@@ -78,7 +81,12 @@ var app = new Vue({
     		//value from 0 to 1
     		var hue=(((value-0.3)/0.7)*120).toString(10);
     		return ["hsl(",hue,",100%,90%)"].join("");
-		}
+		},
+        onresize: function(e) {
+           //note i need to pass the event as an argument to the function
+           width = e.target.outerWidth;
+           height = e.target.outerHeight;
+        },
     },
     computed: {
         results: function() {
