@@ -11,7 +11,7 @@
                     <div class="p3">
                     	<div class="row cf mb1">
                     		<div class="seven columns">
-                    			<h4>{{student.name}}</h4>
+                        		<a :href="'/student/' + student.id"><h4 class="mb1" v-html="m(student.name)"></h4></a>
                     		</div>
 							<div class="five columns">
 								<h5>{{Math.round(student.match*100)}}% match</h5>
@@ -24,10 +24,7 @@
                             </label>
                         </span>
 						</div>
-                    	</div>
-                        
-                        
-                        <a class="btn mt3 w-100" :href="'/student/' + student.id">View Details</a>
+                    	</div>              
                     </div>
                 </div>
             </div>
