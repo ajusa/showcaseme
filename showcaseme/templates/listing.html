@@ -2,6 +2,7 @@
 <main class="container mt4" id="app">
     <div class="row mt2 cf">
         <div class="seven columns mt2">
+        <button @click+"edit=!edit">Toggle Edit</button>
             <div class="card">
                 <div class="p3">
                     <fancy-input v-model="listing.title" :edit="edit">
@@ -10,16 +11,7 @@
                         <p class="silver" v-html="m(listing.blurb)"></p>
                     </fancy-input>
                     <h5>Required Skills</h5>
-                    <fancy-input v-model="listing.description" :edit="edit">
-                        <div v-html="m(listing.description)"></div>
-                    </fancy-input>
-
-                </div>
-            </div>
-        </div>
-        <div class="five columns mt2">
-            <h3>Skills</h3>
-            <span class="m1 mv2 dib" v-for="(tag, index) in listing.tags.slice().sort(function(a, b){return b.skill - a.skill})">
+                    <span class="m1 mv2 dib" v-for="(tag, index) in listing.tags.slice().sort(function(a, b){return b.skill - a.skill})">
                     <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
                         {{tag.name}}
                         <i class="icon icon-arrow-up ml2 dim" v-if="edit && tag.skill < 2" @click="tag.skill++"></i>
@@ -27,6 +19,15 @@
                         <i class="icon icon-cross ml2 dim" v-if="edit" @click="removeTag(index)"></i>
                     </label>
                 </span>
+                    <h5>Bonus Skills</h5>
+                    <fancy-input v-model="listing.description" :edit="edit">
+                        <div v-html="m(listing.description)"></div>
+                    </fancy-input>
+                </div>
+            </div>
+        </div>
+        <div class="five columns mt2">
+            <h3>Required Skills</h3>
             <div v-if="edit">
                 <input type="text" v-model="searchTerm" placeholder="Start typing to search">
                 <span class="m1 mv2 dib" v-for="(tag, index) in results">
@@ -97,14 +98,17 @@ Vue.component('fancyInput', {
 var app = new Vue({
     el: "#app",
     created: function() {
+        this.$set(this.listing, 'bonus_tags', this.listing.tags || [])
         this.$set(this.listing, 'tags', this.listing.tags || [])
     },
     data: {
         edit: false,
         m: marked,
-        listing: {title: "Lead Engineer", blurb: "Microsoft", description:"Do things and make money"},
+        listing: { title: "Lead Engineer", blurb: "Microsoft", description: "Do things and make money" },
         //
-        tags: addTagState([[tag | tojson]]),
+        tags: addTagState([
+            [tag | tojson]
+        ]),
         exampleProj: { title: "Example Title", blurb: "Intern", description: "Helped manage systems and distributed analysis of plugins relating to wordpress. Performed statistical analysis on multiple datasets using flareon architecture." },
         searchTerm: '',
         swal: swal,
@@ -113,8 +117,8 @@ var app = new Vue({
         saveProfile: function() {
             this.edit = false;
             this.listing.tags.sort(function(a, b) { return b.skill - a.skill })
-            app.$http.post('/profile', this.listing).then(function(resp) {
-                swal("", "Profile has been saved!", "success")
+            app.$http.post('/listing', this.listing).then(function(resp) {
+                swal("", "Listing has been saved!", "success")
             });
         },
         addTag: function(i) {
@@ -124,6 +128,14 @@ var app = new Vue({
         removeTag: function(i) {
             this.listing.tags.sort(function(a, b) { return b.skill - a.skill })
             this.listing.tags.splice(i, 1)
+        },
+        addBonusTag: function(i) {
+            this.listing.bonus_tags.sort(function(a, b) { return b.skill - a.skill })
+            this.listing.bonus_tags.push(this.results[i])
+        },
+        removeBonusTag: function(i) {
+            this.listing.bonus_tags.sort(function(a, b) { return b.skill - a.skill })
+            this.listing.bonus_tags.splice(i, 1)
         },
     },
     computed: {

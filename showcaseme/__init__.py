@@ -22,12 +22,12 @@ DEFAULT_COMPANY = {
 DEFAULT_LISTING = {
 		"title": "Lead Widget Designer",
 		"description": "Hover over me to edit this paragraph. ShowcaseMe supports Markdown in the editing popup as well!",
-		"requirements": [
+		"tags": [
 			{"name":"Python", "skill":2}, 
 			{"name":"C++", "skill":1},
 			{"name":"Web Development", "skill":0}
 		],
-		"bonus_reqs": [
+		"bonus_tags": [
 		{"name":"Backend Development", "skill":1}
 		],
 		"compensation": "335k salary with sizeable bonuses. Perks include free food and state-of-the-art insurance."
