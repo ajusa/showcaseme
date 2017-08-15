@@ -1,6 +1,7 @@
 from flask import Flask, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
 from flask_login import LoginManager, login_required, login_user, logout_user , current_user
 from tinydb import TinyDB, Query
+from flask_mail import Mail
 DEFAULT_PROFILE = {
 	"name": "John Doe",
 	"blurb": "Maker and Worker",

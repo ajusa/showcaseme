@@ -113,14 +113,14 @@ def searchListings():
 def send_mail():
 	if request.method == 'POST': #Sending the message
 		msg = request.get_json()
-	    mail.send_message(
-	        msg['subject'],
-	        sender=(current_user.name, "ARHAM FIREBASE EMAIL THINGY"),
-	        recipients=[getUserData(msg['target']) "ARHAM MORE EMAILS"],
-	        body=msg['body']
-	    )
-    return jsonify(result='ok')
-
+		mail.send_message(
+			msg['subject'],
+			sender=(current_user.name, "ARHAM FIREBASE EMAIL THINGY"),
+			recipients=[getUserData(msg['target']), "ARHAM MORE EMAILS"],
+			body=msg['body']
+		)
+		return jsonify(result='ok')
+	return jsonify(result='ok')
 # handle login failed
 @app.errorhandler(401)
 def page_not_found(e):
