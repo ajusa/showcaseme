@@ -5,31 +5,52 @@
             <span class="blue f3 b">Showcase</span><span class="purple f3 b">Me</span>
         </div>
         <h3 class="mt3 pt3">Search Results: </h3>
-        <div class="row cf">
+        <div class="row cf" v-if="width>550">
             <div class="four columns" v-for="column in students">
                 <div class="card mv3" v-bind:style="'background-color:' + getColor(student.match)" v-for="student in column">
                     <div class="p3">
-                    	<div class="row cf mb1">
-                    		<div class="seven columns">
-                        		<a :href="'/student/' + student.id"><h4 class="mb1" v-html="m(student.name)"></h4></a>
-                    		</div>
-							<div class="five columns">
-								<h5>{{Math.round(student.match*100)}}% match</h5>
-							</div>
-							<p class="silver twelve columns" v-html="m(student.blurb)"></p>
-						<div class="twelve columns">
-							<span class="m1 mv2 dib" v-for="tag in student.tags.slice().sort(function(a, b){return b.skill - a.skill})">
+                        <div class="row cf mb1">
+                            <div class="seven columns">
+                                <a :href="'/student/' + student.id"><h4 class="mb1" v-html="m(student.name)"></h4></a>
+                            </div>
+                            <div class="five columns">
+                                <h5>{{Math.round(student.match*100)}}% match</h5>
+                            </div>
+                            <p class="silver twelve columns" v-html="m(student.blurb)"></p>
+                            <div class="twelve columns">
+                                <span class="m1 mv2 dib" v-for="tag in student.tags.slice().sort(function(a, b){return b.skill - a.skill})">
                             <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
                                 {{tag.name}} 
                             </label>
                         </span>
-						</div>
-                    	</div>              
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        
+        <div v-else>
+            <div class="card mv3" v-bind:style="'background-color:' + getColor(student.match)" v-for="student in rawStudents">
+                    <div class="p3">
+                        <div class="row cf mb1">
+                            <div class="seven columns">
+                                <a :href="'/student/' + student.id"><h4 class="mb1" v-html="m(student.name)"></h4></a>
+                            </div>
+                            <div class="five columns">
+                                <h5>{{Math.round(student.match*100)}}% match</h5>
+                            </div>
+                            <p class="silver twelve columns" v-html="m(student.blurb)"></p>
+                            <div class="twelve columns">
+                                <span class="m1 mv2 dib" v-for="tag in student.tags.slice().sort(function(a, b){return b.skill - a.skill})">
+                            <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
+                                {{tag.name}} 
+                            </label>
+                        </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
     </div>
 </div>
 [% include 'footer.html' %]
@@ -49,6 +70,7 @@ function chunkArray(myArray, chunk_size) {
     }
     return tempArray;
 }
+
 function addTagState(tags) {
     var arr = []
     for (var i = tags.length - 1; i >= 0; i--) {
@@ -60,15 +82,21 @@ function addTagState(tags) {
 <script>
 var app = new Vue({
     el: '#app',
-
+    created: function() {
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+            this.mobile = true
+        }
+    },
     data: {
+        rawStudents: [[data | tojson]],
         students: chunkArray([[data | tojson]], 3),
         m: marked,
         selectedTags: [],
         searchTerm: '',
-        tags:  addTagState([[tags | tojson]])
+        tags: addTagState([[tags | tojson]]),
+        width: screen.width,
     },
-    methods:{
+    methods: {
         addTag: function(i) {
             this.selectedTags.sort(function(a, b) { return b.skill - a.skill })
             this.selectedTags.push(this.results[i])
@@ -77,21 +105,16 @@ var app = new Vue({
             this.selectedTags.sort(function(a, b) { return b.skill - a.skill })
             this.selectedTags.splice(i, 1)
         },
-        getColor: function(value){
-    		//value from 0 to 1
-    		var hue=(((value-0.3)/0.7)*120).toString(10);
-    		return ["hsl(",hue,",100%,90%)"].join("");
-		},
-        onresize: function(e) {
-           //note i need to pass the event as an argument to the function
-           width = e.target.outerWidth;
-           height = e.target.outerHeight;
+        getColor: function(value) {
+            //value from 0 to 1
+            var hue = (((value - 0.3) / 0.7) * 120).toString(10);
+            return ["hsl(", hue, ",100%,90%)"].join("");
         },
     },
     computed: {
         results: function() {
             var self = this;
-            var fuse = new Fuse(this.tags, {keys: ["name"]});
+            var fuse = new Fuse(this.tags, { keys: ["name"] });
             var arr = fuse.search(this.searchTerm)
             var temp = []
             for (var i = this.selectedTags.length - 1; i >= 0; i--) { //this bit of code is to avoid adding duplicates.
