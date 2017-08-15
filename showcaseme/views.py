@@ -106,7 +106,7 @@ def searchListings():
 	foundSorted = list(Counter(found).most_common())
 	#print(request.args)
 	#print([getUserData(user)['profile'] for user in sorted(found, key=found.get, reverse=True) if 'profile' in getUserData(user)])
-	return render_template('searchListings.html', data = [dict(getListingData(listing[0])['profile'].items() + {'id': getListingData(listing[0])['id']}.items() + 
+	return render_template('searchListings.html', data = [dict(getListingData(listing[0]).items() + {'id': getListingData(listing[0])['id']}.items() + 
 		{'match': found[listing[0]]}.items()) for listing in foundSorted if (getListingData(listing[0]) and 'profile' in getListingData(listing[0]))], tags = TAGS)
 
 @app.route('/send-mail/', methods=['GET', 'POST'])
@@ -116,7 +116,7 @@ def send_mail():
 		mail.send_message(
 			msg['subject'],
 			sender=(current_user.name, "ARHAM FIREBASE EMAIL THINGY"),
-			recipients=[getUserData(msg['target']), "ARHAM MORE EMAILS"],
+			recipients=[getUserData(msg['target'])['profile']['name'], "ARHAM MORE EMAILS"],
 			body=msg['body']
 		)
 		return jsonify(result='ok')
