@@ -1,4 +1,4 @@
-from showcaseme import users#, listings
+from showcaseme import users, listings
 from flask_login import UserMixin
 from tinydb import Query
 from collections import Counter

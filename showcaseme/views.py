@@ -1,5 +1,5 @@
-from showcaseme import app, login_manager, users, db, DEFAULT_PROFILE, TAGS, mail#,listings
-from showcaseme.models import User, getUserData, userSearch#, listingSearch
+from showcaseme import app, login_manager, users, db, DEFAULT_PROFILE, TAGS, mail, listings
+from showcaseme.models import User, getUserData, userSearch, listingSearch
 from tinydb import TinyDB, Query
 from flask import Flask, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
@@ -26,10 +26,16 @@ def viewUser(id):
 	if 'profile' in user:
 		return render_template('profile.html', data = user['profile'], tag = TAGS, id=id)
 	return render_template('profile.html')
-@app.route('/listing')
+@app.route('/listing', methods=['GET', 'POST'])
 @usertype_required
 def listing():
-	return render_template('listing.html', tag = TAGS)
+	if request.method == 'POST':
+		listing = request.get_json()
+		q = Query()
+		listings.update({key:listing[key] for key in listing}, q.id == listing['id'])
+		return jsonify(result='ok')
+	else:
+		return render_template('listing.html', tag = TAGS)
 @app.route('/about')
 @usertype_required
 def about():
