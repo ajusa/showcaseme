@@ -82,11 +82,6 @@ function addTagState(tags) {
 <script>
 var app = new Vue({
     el: '#app',
-    created: function() {
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
-            this.mobile = true
-        }
-    },
     data: {
         rawStudents: [[data | tojson]],
         students: chunkArray([[data | tojson]], 3),
