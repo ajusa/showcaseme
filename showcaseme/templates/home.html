@@ -8,7 +8,7 @@
             <div class="six columns card mv2">
                 <div class="p3">
                     [% if not current_user.is_authenticated %]
-                    <button class="mb4 mt3 center" onclick="location.href='/login'">I'm with a company</button>
+                    <button class="mb4 mt3 center" onclick="location.href='/login'">I'm a company</button>
                     [% endif %]
                     <h4>Search for students near you</h4>
                     <span class="m1 mv2 dib" v-for="(tag, index) in selectedTags.slice().sort(function(a, b){return b.skill - a.skill})">
