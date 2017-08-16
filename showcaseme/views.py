@@ -38,9 +38,9 @@ def viewListing(id):
 @login_required
 @app.route('/listing', methods=['GET', 'POST'])
 def listing(id=False):
-	if request.method == 'POST': #update listing
-		rawListing['user'] = current_user.id
+	if request.method == 'POST' and current_user.userType=='company': #update listing
 		rawListing = request.get_json()
+		rawListing['user'] = current_user.id
 		q = Query()
 		listing = listings.search(q.id == rawListing['id'])
 		print(len(listing) == 0)
@@ -48,6 +48,7 @@ def listing(id=False):
 		else: listings.update(rawListing, q.id == rawListing['id'])
 		return jsonify(result='ok')
 	else: #create listing
+		DEFAULT_LISTING['user'] = current_user.id
 		return render_template('listing.html', tag = TAGS, id = uuid.uuid4(), data=DEFAULT_LISTING)
 @app.route('/about')
 @usertype_required
