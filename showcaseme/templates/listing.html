@@ -33,8 +33,10 @@
                 </div>
             </div>
             <br>
+            [% if current_user.is_authenticated and current_user.id == data['user'] %]
             <button v-if="!edit" @click="edit=true">Edit</button>
             <button v-else @click="saveListing">Save</button>
+            [% endif %]
         </div>
         <div class="five columns mt2">
             <div v-if="edit">
@@ -117,17 +119,16 @@ Vue.component('fancyInput', {
 var app = new Vue({
     el: "#app",
     created: function() {
-        this.$set(this.listing, 'bonus_tags', this.listing.tags || [])
+        this.$set(this.listing, 'bonus_tags', this.listing.bonus_tags || [])
         this.$set(this.listing, 'tags', this.listing.tags || [])
     },
     data: {
         edit: false,
         m: marked,
-        listing: { title: "Lead Engineer", blurb: "Microsoft", description: "Do things and make money" },
-        //
+        listing: [[data | tojson]],
+        id: [[id | tojson]],
         tags: addTagState([[tag | tojson]]),
         tags2: addTagState([[tag | tojson]]),
-        exampleProj: { title: "Example Title", blurb: "Intern", description: "Helped manage systems and distributed analysis of plugins relating to wordpress. Performed statistical analysis on multiple datasets using flareon architecture." },
         searchTerm: '',
         bonusSearchTerm: '',
         swal: swal,
@@ -136,9 +137,12 @@ var app = new Vue({
         saveListing: function() {
             this.edit = false;
             this.listing.tags.sort(function(a, b) { return b.skill - a.skill })
+            this.listing.bonus_tags.sort(function(a, b) { return b.skill - a.skill })
+            this.listing.id = this.id
             app.$http.post('/listing', this.listing).then(function(resp) {
                 swal("", "Listing has been saved!", "success")
             });
+            window.location.href += "/"+ this.id;
         },
         addTag: function(i) {
             this.listing.tags.sort(function(a, b) { return b.skill - a.skill })

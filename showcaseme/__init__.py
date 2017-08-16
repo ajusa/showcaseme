@@ -21,7 +21,8 @@ DEFAULT_COMPANY = {
 }
 DEFAULT_LISTING = {
 		"title": "Lead Widget Designer",
-		"description": "Hover over me to edit this paragraph. ShowcaseMe supports Markdown in the editing popup as well!",
+		"blurb": "Microsoft",
+		"description": "Click me to edit this paragraph. ShowcaseMe supports Markdown in the editing popup as well! 335k salary with sizeable bonuses. Perks include free food and state-of-the-art insurance.",
 		"tags": [
 			{"name":"Python", "skill":2}, 
 			{"name":"C++", "skill":1},
@@ -30,7 +31,6 @@ DEFAULT_LISTING = {
 		"bonus_tags": [
 		{"name":"Backend Development", "skill":1}
 		],
-		"compensation": "335k salary with sizeable bonuses. Perks include free food and state-of-the-art insurance."
 	  } 
 TAGS = lines = open("tags.txt").read().splitlines()
 class CustomFlask(Flask):

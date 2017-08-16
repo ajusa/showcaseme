@@ -1,10 +1,11 @@
-from showcaseme import app, login_manager, users, db, DEFAULT_PROFILE, TAGS, mail, listings
+from showcaseme import app, login_manager, users, db, DEFAULT_PROFILE, DEFAULT_LISTING, TAGS, mail, listings
 from showcaseme.models import User, getUserData, userSearch, listingSearch
 from tinydb import TinyDB, Query
 from flask import Flask, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 from functools import wraps
 from collections import Counter
+import uuid
 def usertype_required(f):		
     @wraps(f)		
     def decorated_function(*args, **kwargs):		
@@ -26,16 +27,28 @@ def viewUser(id):
 	if 'profile' in user:
 		return render_template('profile.html', data = user['profile'], tag = TAGS, id=id)
 	return render_template('profile.html')
-@app.route('/listing', methods=['GET', 'POST'])
-@usertype_required
-def listing():
-	if request.method == 'POST':
-		listing = request.get_json()
+
+@app.route('/listing/<id>', methods=['GET', 'POST'])
+def viewListing(id):
 		q = Query()
-		listings.update({key:listing[key] for key in listing}, q.id == listing['id'])
+		listing = listings.search(q.id == id)
+		return render_template('listing.html', tag = TAGS, id = id, data=listing[0])
+
+@usertype_required
+@login_required
+@app.route('/listing', methods=['GET', 'POST'])
+def listing(id=False):
+	if request.method == 'POST': #update listing
+		rawListing['user'] = current_user.id
+		rawListing = request.get_json()
+		q = Query()
+		listing = listings.search(q.id == rawListing['id'])
+		print(len(listing) == 0)
+		if len(listing) == 0: listings.insert(rawListing)
+		else: listings.update(rawListing, q.id == rawListing['id'])
 		return jsonify(result='ok')
-	else:
-		return render_template('listing.html', tag = TAGS)
+	else: #create listing
+		return render_template('listing.html', tag = TAGS, id = uuid.uuid4(), data=DEFAULT_LISTING)
 @app.route('/about')
 @usertype_required
 def about():
