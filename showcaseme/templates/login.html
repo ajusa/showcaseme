@@ -1,5 +1,7 @@
 [% include 'head.html' %]
 <div class="container mt4" id="app">
+    <h5 class="b">Please Note!</h5>
+    <p class="mw6">If you are with a company, joining with a Google account will link that account's personal information with the company that you are representing.</p>
     <div class="row cf">
         <div class="six columns mt4">
             <h3 class="mb2 pb2">Sign in</h3>
@@ -47,7 +49,11 @@ var app = new Vue({
                     name: user.displayName
                 }).then(function(resp) {
                     firebase.auth().signOut().then(function() {}, function(error) {});
-                    window.location.replace("/")
+                    if (resp.body.result != 'ok') {
+                        window.location.replace("/usertype")
+                    } else{
+                        window.location.replace("/")
+                    }
                 });
             }
         });
@@ -55,22 +61,23 @@ var app = new Vue({
     methods: {
         login: function() {
             firebase.auth().signInWithEmailAndPassword(this.email, this.password).catch(function(error) {
-                var errorCode = error.code;
+                /*var errorCode = error.code;
                 var errorMessage = error.message;
-                alert("Error")
+                alert("Error: " + error.message)*/
             });
         },
         withGoogle: function() {
             firebase.auth().signInWithPopup(google).then(function(result) {
-                var user = result.user;
+                /*var user = result.user;
                 console.log(user)
                 app.$http.post('/login', {
                     uid: user.uid,
                     name: user.displayName
                 }).then(function(resp) {
                     firebase.auth().signOut().then(function() {}, function(error) {});
-                    window.location.replace("/")
-                });
+                    console.log(resp.body)
+                    //window.location.replace("/")
+                });*/
                 // ...
             }).catch(function(error) {});
         }

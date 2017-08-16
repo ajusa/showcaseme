@@ -1,0 +1,195 @@
+[% include 'head.html' %]
+<main class="container mt4" id="app">
+    <div class="row mt2 cf">
+        <div class="seven columns mt2">
+            <div class="card">
+                <div class="p3">
+                    <fancy-input v-model="listing.title" :edit="edit">
+                        <h3 v-html="m(listing.title)"></h3></fancy-input>
+                    <fancy-input v-model="listing.blurb" :edit="edit">
+                        <p class="silver" v-html="m(listing.blurb)"></p>
+                    </fancy-input>
+                    <h5 class="mb1">Required Skills</h5>
+                    <span class="m1 mv2 dib" v-for="(tag, index) in listing.tags.slice().sort(function(a, b){return b.skill - a.skill})">
+                    <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
+                        {{tag.name}}
+                        <i class="icon icon-arrow-up ml2 dim" v-if="edit && tag.skill < 2" @click="tag.skill++"></i>
+                        <i class="icon icon-arrow-down ml2 dim" v-if="edit && tag.skill > 0" @click="tag.skill--"></i>
+                        <i class="icon icon-cross ml2 dim" v-if="edit" @click="removeTag(index)"></i>
+                    </label>
+                </span>
+                    <h5 class="mb1">Bonus Skills</h5>
+                    <span class="m1 mv2 dib" v-for="(tag, index) in listing.bonus_tags.slice().sort(function(a, b){return b.skill - a.skill})">
+                    <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
+                        {{tag.name}}
+                        <i class="icon icon-arrow-up ml2 dim" v-if="edit && tag.skill < 2" @click="tag.skill++"></i>
+                        <i class="icon icon-arrow-down ml2 dim" v-if="edit && tag.skill > 0" @click="tag.skill--"></i>
+                        <i class="icon icon-cross ml2 dim" v-if="edit" @click="removeBonusTag(index)"></i>
+                    </label>
+                    </span>
+                    <fancy-input v-model="listing.description" :edit="edit">
+                        <div v-html="m(listing.description)"></div>
+                    </fancy-input>
+                </div>
+            </div>
+            <br>
+            [% if current_user.is_authenticated and current_user.id == data['user'] %]
+            <button v-if="!edit" @click="edit=true">Edit</button>
+            <button v-else @click="saveListing">Save</button>
+            [% endif %]
+        </div>
+        <div class="five columns mt2">
+            <div v-if="edit">
+                <h3 class="mb1">Add Required Skill</h3>
+                <input type="text" v-model="searchTerm" placeholder="Start typing to search">
+                <span class="m1 mv2 dib" v-for="(tag, index) in results">   
+                    <label class="chip">
+                        {{tag.name}}
+                        <i class="icon icon-plus ml2" @click="addTag(index)"></i>
+                    </label>
+                </span>
+
+                <h3 class="mt3 mb1">Add Bonus Skill</h3>
+                <input type="text" v-model="bonusSearchTerm" placeholder="Start typing to search">
+                <span class="m1 mv2 dib" v-for="(tag, index) in bonusResults">   
+                    <label class="chip">
+                        {{tag.name}}
+                        <i class="icon icon-plus ml2" @click="addBonusTag(index)"></i>
+                    </label>
+                </span>
+            </div>
+        </div>
+    </div>
+</main>
+[% include 'footer.html' %]
+</body>
+<script src="[[url_for('static',filename='autosize.min.js')]]"></script>
+<script src="[[url_for('static',filename='fuse.js')]]"></script>
+<link rel="stylesheet" href="[[url_for('static',filename='icons.min.css')]]">
+<script>
+Vue.directive('autosize', {
+    bind: function(el, binding) {
+        var tagName = el.tagName
+        if (tagName == 'TEXTAREA')
+            autosize(el)
+        else if (tagName == 'INPUT' && el.type == 'text')
+            autoSizeInput(el)
+    },
+    componentUpdated: function(el, binding, vnode) {
+        var tagName = el.tagName
+        if (tagName == 'TEXTAREA')
+            autosize.update(el)
+    },
+    unbind: function(el) {
+        autosize.destroy(el)
+    }
+})
+
+function addTagState(tags) {
+    var arr = []
+    for (var i = tags.length - 1; i >= 0; i--) {
+        arr.push({ name: tags[i], skill: 0 })
+    }
+    return arr
+}
+</script>
+<script type="text/x-template" id="fancy">
+    <div class="mb1">
+        <div v-if="!state" style="min-width: 40px; min-height: 20px;" @click="state = true && edit">
+            <slot></slot>
+        </div>
+        <div v-if="edit&&state">
+            <textarea type="text" v-model="ivalue" v-autosize="ivalue"></textarea>
+            <button class="btn-primary btn-sm" @click="save">Finish</button>
+        </div>
+    </div>
+</script>
+<script>
+Vue.component('fancyInput', {
+    props: ['value', 'edit'],
+    data: function() { return { state: false, ivalue: this.value } },
+    methods: {
+        save: function() {
+            this.state = false
+            this.$emit('input', this.ivalue)
+        }
+    },
+    template: "#fancy"
+});
+var app = new Vue({
+    el: "#app",
+    created: function() {
+        this.$set(this.listing, 'bonus_tags', this.listing.bonus_tags || [])
+        this.$set(this.listing, 'tags', this.listing.tags || [])
+    },
+    data: {
+        edit: false,
+        m: marked,
+        listing: [[data | tojson]],
+        id: [[id | tojson]],
+        tags: addTagState([[tag | tojson]]),
+        tags2: addTagState([[tag | tojson]]),
+        searchTerm: '',
+        bonusSearchTerm: '',
+        swal: swal,
+    },
+    methods: {
+        saveListing: function() {
+            this.edit = false;
+            this.listing.tags.sort(function(a, b) { return b.skill - a.skill })
+            this.listing.bonus_tags.sort(function(a, b) { return b.skill - a.skill })
+            this.listing.id = this.id
+            app.$http.post('/listing', this.listing).then(function(resp) {
+                swal("", "Listing has been saved!", "success")
+            });
+            window.location.href = "/listing/"+ this.id;
+        },
+        addTag: function(i) {
+            this.listing.tags.sort(function(a, b) { return b.skill - a.skill })
+            this.listing.tags.push(this.results[i])
+        },
+        removeTag: function(i) {
+            this.listing.tags.sort(function(a, b) { return b.skill - a.skill })
+            this.listing.tags.splice(i, 1)
+        },
+        addBonusTag: function(i) {
+            this.listing.bonus_tags.sort(function(a, b) { return b.skill - a.skill })
+            this.listing.bonus_tags.push(this.bonusResults[i])
+        },
+        removeBonusTag: function(i) {
+            this.listing.bonus_tags.sort(function(a, b) { return b.skill - a.skill })
+            this.listing.bonus_tags.splice(i, 1)
+        },
+    },
+    computed: {
+        results: function() {
+            var self = this;
+            var fuse = new Fuse(this.tags, { keys: ["name"] });
+            var arr = fuse.search(this.searchTerm)
+            var temp = []
+            for (var i = this.listing.tags.length - 1; i >= 0; i--) { //this bit of code is to avoid adding duplicates.
+                temp.push(this.listing.tags[i].name)
+            }
+            arr = arr.filter(function(val) {
+                return temp.indexOf(val.name) == -1;
+            })
+            return arr
+        },
+        bonusResults: function() {
+            var self = this;
+            var fuse = new Fuse(this.tags2, { keys: ["name"] });
+            var arr = fuse.search(this.bonusSearchTerm)
+            var temp = []
+            for (var i = this.listing.bonus_tags.length - 1; i >= 0; i--) { //this bit of code is to avoid adding duplicates.
+                temp.push(this.listing.bonus_tags[i].name)
+            }
+            arr = arr.filter(function(val) {
+                return temp.indexOf(val.name) == -1;
+            })
+            return arr
+        },
+    },
+})
+</script>
+
+</html>
