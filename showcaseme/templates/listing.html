@@ -142,7 +142,7 @@ var app = new Vue({
             app.$http.post('/listing', this.listing).then(function(resp) {
                 swal("", "Listing has been saved!", "success")
             });
-            window.location.href += "/"+ this.id;
+            window.location.href = "/listing/"+ this.id;
         },
         addTag: function(i) {
             this.listing.tags.sort(function(a, b) { return b.skill - a.skill })

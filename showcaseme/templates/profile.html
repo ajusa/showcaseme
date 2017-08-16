@@ -7,6 +7,8 @@
             <fancy-input v-model="user.blurb" :edit="edit">
                 <p v-html="m(user.blurb)"></p>
             </fancy-input>
+
+            [% if current_user.userType == 'student' %]
             <h3>Featured Projects</h3>
             <div class="card mv3" v-for="(project, index) in user.projects">
                 <div class="p3">
@@ -22,6 +24,11 @@
                 </div>
             </div>
             <button class="btn-primary mv3 w-100" v-if="edit" @click="user.projects.push(JSON.parse(JSON.stringify(exampleProj)))">Add Project</button>
+            [% endif %]
+            [% if current_user.is_authenticated and current_user.id == id %]
+            <button class="btn-primary mt2" v-if="edit" @click="saveProfile">Save Profile</button>
+            <button class="btn-primary mt2" v-else @click="edit = true">Edit Profile</button>
+            [% endif %]
         </div>
         <div class="five columns mt2">
         [% if current_user.userType == 'student' %]
@@ -44,21 +51,30 @@
                 </span>
             </div>
         [% else %]
-            <div class="card mv3">
+            <div class="card mv3" v-for="listing in listings">
                 <div class="p3">
-                    <h4></h4>
-                    <p class="silver"></p>
-
+                    <a class="f4" :href="'/listing/'+listing.id" v-html="m(listing.title)"></a>
+                    <p class="silver" v-html="m(listing.blurb)"></p>
+                    <h5 class="mb1">Skills</h5>
+                    <span class="m1 mv2 dib" v-for="(tag, index) in listing.tags.slice().sort(function(a, b){return b.skill - a.skill})">
+                        <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
+                            {{tag.name}}
+                        </label>
+                    </span>
+                    <h5 class="mb1">Bonus Skills</h5>
+                    <span class="m1 mv2 dib" v-for="(tag, index) in listing.bonus_tags.slice().sort(function(a, b){return b.skill - a.skill})">
+                        <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
+                            {{tag.name}}
+                        </label>
+                    </span>
+                    <div v-html="m(listing.description)"></div>
                 </div>
             </div>
         
         [% endif %]
         </div>
     </div>
-    [% if current_user.is_authenticated and current_user.id == id %]
-    <button class="btn-primary mt2" v-if="edit" @click="saveProfile">Save Profile</button>
-    <button class="btn-primary mt2" v-else @click="edit = true">Edit Profile</button>
-    [% endif %]
+    
 </main>
 [% include 'footer.html' %]
 </body>
