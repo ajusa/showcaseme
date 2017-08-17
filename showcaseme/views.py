@@ -25,7 +25,11 @@ def home():
 def viewUser(id):
 	user = getUserData(id)
 	if ('profile' in user and user['userType']):
-		return render_template('profile.html', data = user['profile'], tag = TAGS, id=id, userType = user['userType'])
+		if user['userType'] == 'student':
+			return render_template('profile.html', data = user['profile'], tag = TAGS, id=id, userType = user['userType'])
+		else:
+			q = Query()
+			return render_template('profile.html', data = user['profile'], tag = TAGS, id=id, userType = user['userType'], listings= listings.search(q.user == user['id']))
 	return render_template('profile.html')
 
 @app.route('/listing/<id>', methods=['GET', 'POST'])

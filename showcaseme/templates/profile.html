@@ -31,7 +31,7 @@
             [% endif %]
         </div>
         <div class="five columns mt2">
-        [% if current_user.userType == 'student' %]
+        [% if userType == 'student' %]
             <h3>Skills</h3>
             <span class="m1 mv2 dib" v-for="(tag, index) in user.tags.slice().sort(function(a, b){return b.skill - a.skill})">
                     <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
@@ -139,7 +139,7 @@ var app = new Vue({
     },
     data: {
         edit: false,
-        [% if current_user.userType == 'company' %]
+        [% if userType == 'company' %]
         listings: [[listings | tojson]],
         [% endif %]
         m: marked,
