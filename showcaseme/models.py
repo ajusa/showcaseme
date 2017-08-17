@@ -24,9 +24,9 @@ def userSearch(requirements, bonusReqs=[], requirementWeight=1.0, bonusWeight=0.
 	requirements = {key: int(requirements[key]) for key in requirements}
 	bonusReqs = {key: int(bonusReqs[key]) for key in bonusReqs}
 	maxPoints = requirementWeight * sum([1+val for val in requirements.values()]) + bonusWeight * sum([1+val for val in bonusReqs.values()])
-	for user in users.all():
+	for user in (user for user in users.all() if 'userType' in user and user['userType'] == 'student'):
 		if not maxPoints:
-			foundUsers = {user['id']: 1.0 for user in users.all()}
+			foundUsers = {user['id']: 1.0 for user in (user for user in users.all() if 'userType' in user and user['userType'] == 'student')}
 			break
 		points = 0.0
 		if not 'profile' in user:

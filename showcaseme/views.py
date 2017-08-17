@@ -15,12 +15,9 @@ def usertype_required(f):
     return decorated_function
 @app.route('/')
 def home():
-	temp = []
-	for item in users.all():
-		if 'profile' in item:
-			item['profile']['id'] = item['id']
-			temp.append(item['profile'])
-	return render_template('home.html', data=temp, tags = TAGS)
+	found = userSearch([])
+	foundSorted = list(Counter(found).most_common())
+	return render_template('home.html', data= [dict(getUserData(user[0])['profile'].items()) for user in foundSorted if (getUserData(user[0]) and 'profile' in getUserData(user[0]))], tags = TAGS)
 @app.route('/student/<id>')
 def viewUser(id):
 	user = getUserData(id)
