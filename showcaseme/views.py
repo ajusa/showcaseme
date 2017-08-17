@@ -1,7 +1,7 @@
 from showcaseme import app, login_manager, users, db, DEFAULT_PROFILE, DEFAULT_LISTING, TAGS, mail, listings
 from showcaseme.models import User, getUserData, userSearch, listingSearch
 from tinydb import TinyDB, Query
-from flask import Flask, flash, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
+from flask import Flask, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 from functools import wraps
 from collections import Counter
@@ -24,8 +24,8 @@ def home():
 @app.route('/student/<id>')
 def viewUser(id):
 	user = getUserData(id)
-	if 'profile' in user:
-		return render_template('profile.html', data = user['profile'], tag = TAGS, id=id, userType = getUserData(id)['userType'])
+	if ('profile' in user and user['userType']):
+		return render_template('profile.html', data = user['profile'], tag = TAGS, id=id, userType = user['userType'])
 	return render_template('profile.html')
 
 @app.route('/listing/<id>', methods=['GET', 'POST'])
@@ -47,13 +47,9 @@ def listing(id=False):
 		if len(listing) == 0: listings.insert(rawListing)
 		else: listings.update(rawListing, q.id == rawListing['id'])
 		return jsonify(result='ok')
-	elif current_user.userType=='company':  #create listing
+	else: #create listing
 		DEFAULT_LISTING['user'] = current_user.id
 		return render_template('listing.html', tag = TAGS, id = uuid.uuid4(), data=DEFAULT_LISTING)
-	else:
-		flash('You were successfully banned from N Korea')
-    	return redirect(url_for('home'))
-	#else: they are a student
 @app.route('/about')
 @usertype_required
 def about():
