@@ -8,7 +8,7 @@
                 <p v-html="m(user.blurb)"></p>
             </fancy-input>
 
-            [% if current_user.userType == 'student' %]
+            [% if userType == 'student' %]
             <h3>Featured Projects</h3>
             <div class="card mv3" v-for="(project, index) in user.projects">
                 <div class="p3">
