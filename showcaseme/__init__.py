@@ -33,6 +33,7 @@ DEFAULT_LISTING = {
 		],
 	  } 
 TAGS = lines = open("tags.txt").read().splitlines()
+
 class CustomFlask(Flask):
 	jinja_options = Flask.jinja_options.copy()
 	jinja_options.update(dict(
