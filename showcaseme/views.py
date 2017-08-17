@@ -111,18 +111,18 @@ def profile():
 		user = getUserData(current_user.id)
 		if current_user.userType == 'student':
 			if 'profile' in user:
-				return render_template('profile.html', data = user['profile'], tag = TAGS, id=current_user.id)
+				return render_template('profile.html', data = user['profile'], tag = TAGS, id=current_user.id, userType = current_user.userType)
 			else:
 				DEFAULT_PROFILE['name'] = current_user.name
-				return render_template('profile.html', data = DEFAULT_PROFILE, tag = TAGS, id=current_user.id)
+				return render_template('profile.html', data = DEFAULT_PROFILE, tag = TAGS, id=current_user.id, userType = current_user.userType)
 		else: #they are a company
 			q = Query()
 			listing = listings.search(q.user == current_user.id)
 			if 'profile' in user:
-				return render_template('profile.html', data = user['profile'], tag = TAGS, id=current_user.id, listings = listing )
+				return render_template('profile.html', data = user['profile'], tag = TAGS, id=current_user.id, listings = listing, userType = current_user.userType )
 			else:
 				DEFAULT_PROFILE['name'] = current_user.name
-				return render_template('profile.html', data = DEFAULT_PROFILE, tag = TAGS, id=current_user.id, listings = listing)
+				return render_template('profile.html', data = DEFAULT_PROFILE, tag = TAGS, id=current_user.id, listings = listing, userType = current_user.userType)
 
 @app.route("/search", methods=["GET"])
 def search():
