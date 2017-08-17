@@ -25,7 +25,7 @@ def home():
 def viewUser(id):
 	user = getUserData(id)
 	if 'profile' in user:
-		return render_template('profile.html', data = user['profile'], tag = TAGS, id=id)
+		return render_template('profile.html', data = user['profile'], tag = TAGS, id=id, userType = getUserData(id)['userType'])
 	return render_template('profile.html')
 
 @app.route('/listing/<id>', methods=['GET', 'POST'])
