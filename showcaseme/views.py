@@ -6,6 +6,7 @@ from flask_login import LoginManager, UserMixin, login_required, login_user, log
 from functools import wraps
 from collections import Counter
 import uuid
+from time import sleep
 def usertype_required(f):		
     @wraps(f)		
     def decorated_function(*args, **kwargs):		
@@ -43,18 +44,38 @@ def viewListing(id):
 @login_required
 @app.route('/listing', methods=['GET', 'POST'])
 def listing(id=False):
+	q = Query()
 	if request.method == 'POST' and current_user.userType=='company': #update listing
 		rawListing = request.get_json()
 		rawListing['user'] = current_user.id
-		q = Query()
 		listing = listings.search(q.id == rawListing['id'])
-		print(len(listing) == 0)
-		if len(listing) == 0: listings.insert(rawListing)
-		else: listings.update(rawListing, q.id == rawListing['id'])
+		#print(len(listing) == 0)
+		update = updateListing(rawListing, q)
+		update.next()
+		print(update)
+		#listings.update(rawListing, q.id == rawListing['id'])	
 		return jsonify(result='ok')
+
 	else: #create listing
-		DEFAULT_LISTING['user'] = current_user.id
-		return render_template('listing.html', tag = TAGS, id = uuid.uuid4(), data=DEFAULT_LISTING)
+		"""DEFAULT_LISTING['user'] = current_user.id
+		return render_template('listing.html', tag = TAGS, id = uuid.uuid4(), data=DEFAULT_LISTING)"""
+		listingId = str(uuid.uuid4())
+		url = addListing(listingId)
+		url.next()
+		print("oogah")
+		return url.next()
+
+def addListing(listingId):
+	rawListing=DEFAULT_LISTING
+	rawListing['id'] =  listingId
+	rawListing['user'] = current_user.id
+	listing = listings.all()
+	yield listings.insert(rawListing)
+	yield redirect("/listing/"+listingId)
+
+def updateListing(rawListing, q):
+	yield listings.update(rawListing, q.id == rawListing['id'])	
+
 @app.route('/about')
 @usertype_required
 def about():
