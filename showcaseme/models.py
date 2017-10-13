@@ -1,7 +1,7 @@
 from showcaseme import users, listings
 from flask_login import UserMixin
 from tinydb import Query
-from collections import Counter
+from collections import Counter, OrderedDict
 def getUserData(id):
 	User = Query()
 	if users.search(User.id == id):
@@ -76,3 +76,34 @@ def listingSearch(requirements, bonusReqs=[], requirementWeight=1.0, bonusWeight
 	if limit:
 		foundListings = dict(Counter(foundListings).most_common(limit))
 	return foundListings
+
+def topSkills(limit):
+	skills = {}
+	for listing in listings.all():
+		listingTags = {tag['name']: tag['skill'] for tag in listing['tags']}
+		for tag in (str(tag) for tag in listingTags.keys()):
+			if tag not in skills.keys(): #add new tag to list
+				skills[tag] = {0:0, 1:0, 2:0, 'total':0}
+			#Increase the count of the right skill level of the right tag by 1
+			skills[tag][listingTags[tag]] += 1
+			#increase total level (for sorting)
+			skills[tag]['total'] += 1
+	print(skills)
+	#sort the skills
+	skillTotals = {tag:skills[tag]['total'] for tag in skills.keys()}
+	sortedSkills = OrderedDict(Counter(skillTotals).most_common(limit))
+	print(sortedSkills)
+	"""
+		{'Python': {0: 0, 1: 0, 2: 2, 'total': 2}, 'C++': {0: 0, 1: 2, 2: 0, 'total': 2}, 'Web Development': {0: 2, 1: 0, 2: 0, 'total': 2}}
+	"""
+	#return [{tag:[val for val in skills[tag] ][:-1]} for tag in sortedSkills.keys()] #exclude total
+	sortedSkillLevels = {skill:skills[skill] for skill in sortedSkills}
+	formatted = [{'name': "Underlying Understanding", 'color':"rgba(240, 241, 244, 0.9)", 'data':[ [ skill, sortedSkillLevels[skill][0] ] for skill in sortedSkills.keys() ]}, 
+		{'name': "Passable Proficiency", 'color':"rgba(255, 215, 0, 0.9)", 'data':[ [ skill, sortedSkillLevels[skill][1] ] for skill in sortedSkills.keys() ]},
+		{'name': "Extensive Experience", 'color':"rgba(0, 120, 215, 0.9)", 'data':[ [ skill, sortedSkillLevels[skill][2] ] for skill in sortedSkills.keys() ]}
+	]
+	print("Formatted:", formatted)
+	return formatted
+"""
+[{name: "Series A", data: [["0",32],["1",46],["2",28],["3",21],["4",20],["5",13],["6",27]]}, {name: "Series B", data: [["0",32],["1",46],["2",28],["3",21],["4",20],["5",13],["6",27]]}], {max: 80, stacked: true});
+ """

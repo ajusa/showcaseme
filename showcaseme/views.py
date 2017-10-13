@@ -1,5 +1,5 @@
 from showcaseme import app, login_manager, users, db, DEFAULT_PROFILE, DEFAULT_LISTING, TAGS, mail, listings
-from showcaseme.models import User, getUserData, userSearch, listingSearch
+from showcaseme.models import User, getUserData, userSearch, listingSearch, topSkills
 from tinydb import TinyDB, Query
 from flask import Flask, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
@@ -20,7 +20,8 @@ def home():
 		if 'profile' in item:
 			item['profile']['id'] = item['id']
 			temp.append(item['profile'])
-	return render_template('home.html', data=temp, tags = TAGS)
+	print(topSkills(5))
+	return render_template('home.html', data=temp, tags = TAGS, topSkills = topSkills(10))
 @app.route('/student/<id>')
 def viewUser(id):
 	user = getUserData(id)

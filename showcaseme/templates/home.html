@@ -43,6 +43,10 @@
                 </div>
             </div>
         </div>
+        <div class="row cf">
+        [% with skills=topSkills | tojson %]
+        [% include "chart.html" %]
+        [% endwith %]
         <h3 class="mt3 pt3">Or, browse our featured students:</h3>
         <div class="row cf" >
             <div class="four columns" v-for="column in students">
@@ -94,7 +98,8 @@ var app = new Vue({
         m: marked,
         selectedTags: [],
         searchTerm: '',
-        tags:  addTagState([[tags | tojson]])
+        tags:  addTagState([[tags | tojson]]),
+        skills: [[topSkills | tojson]],
     },
     methods:{
         addTag: function(i) {
