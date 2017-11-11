@@ -61,9 +61,8 @@ var app = new Vue({
     methods: {
         login: function() {
             firebase.auth().signInWithEmailAndPassword(this.email, this.password).catch(function(error) {
-                /*var errorCode = error.code;
-                var errorMessage = error.message;
-                alert("Error: " + error.message)*/
+                console.log(error.code)
+                alert("Error: " + error.message)
             });
         },
         withGoogle: function() {

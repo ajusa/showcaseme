@@ -7,7 +7,7 @@
         <h3 class="mt3 pt3">Search Results: </h3>
         <div class="row cf" v-if="width>550">
             <div class="four columns" v-for="column in students">
-                <div class="card mv3" v-bind:style="'background-color:' + getColor(student.match)" v-for="student in column">
+                <div class="card mv3" v-for="student in column" v-bind:style="'background-color:' + getColor(student.match)" >
                     <div class="p3">
                         <div class="row cf mb1">
                             <div class="seven columns">
@@ -68,6 +68,7 @@ function chunkArray(myArray, chunk_size) {
         tempArray[counter % chunk_size].push(myArray[i])
         counter++
     }
+    console.log(tempArray)
     return tempArray;
 }
 

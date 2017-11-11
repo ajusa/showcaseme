@@ -1,5 +1,5 @@
 from showcaseme import app, login_manager, users, db, DEFAULT_PROFILE, DEFAULT_LISTING, TAGS, mail, listings
-from showcaseme.models import User, getUserData, userSearch, listingSearch, topSkills
+from showcaseme.models import User, getUserData, getListingData, userSearch, listingSearch, topSkills
 from tinydb import TinyDB, Query
 from flask import Flask, g, Response, redirect, url_for, request, session, abort, render_template, jsonify
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
@@ -160,9 +160,24 @@ def searchListings():
 	found = listingSearch(request.args)
 	foundSorted = list(Counter(found).most_common())
 	#print(request.args)
-	#print([getUserData(user)['profile'] for user in sorted(found, key=found.get, reverse=True) if 'profile' in getUserData(user)])
-	return render_template('searchListings.html', data = [dict(getListingData(listing[0]).items() + {'id': getListingData(listing[0])['id']}.items() + 
-		{'match': found[listing[0]]}.items()) for listing in foundSorted if (getListingData(listing[0]) and 'profile' in getListingData(listing[0]))], tags = TAGS)
+	"""print ("foundSorted:", foundSorted)
+	print("first listing:", foundSorted[0][0])
+	print([type(listing[0]) for listing in foundSorted])#"""
+	listings = []
+	for listing in foundSorted:
+		if not getListingData(listing[0]):
+			continue
+		listingData = getListingData(listing[0])
+		listingData['id'] = listingData['id']
+		listingData['match'] = found[listing[0]]
+		listingData['name'] = listingData['title']
+		listings.append(listingData)
+		#print("\n" + str(listingData))
+	#print("\n\n\n\n\n")
+	#print(listings)
+	return render_template('search.html',
+		data = listings,
+		tags = TAGS)
 
 @app.route('/send-mail/', methods=['GET', 'POST'])
 def send_mail():

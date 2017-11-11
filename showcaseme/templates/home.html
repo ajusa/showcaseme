@@ -34,18 +34,35 @@
             </div>
             <div class="six columns card mv2">
                 <div class="p3">
-                     [% if not current_user.is_authenticated %]
-                    <button class="mb3 center" onclick="location.href='/login'">I'm a student</button>
+                    [% if not current_user.is_authenticated %]
+                    <button class="mb4 mt3 center" onclick="location.href='/login'">I'm a student</button>
                     [% endif %]
                     <h4>Search for listings near you</h4>
-                    <input type="text" placeholder="Start searching...">
-                    <button class="btn-primary mt2">Search</button>
+                    <span class="m1 mv2 dib" v-for="(tag, index) in listingSelectedTags.slice().sort(function(a, b){return b.skill - a.skill})">
+                    <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
+                        {{tag.name}}
+                        <i class="icon icon-arrow-up ml2 dim" v-if="tag.skill < 2" @click="tag.skill++"></i>
+                        <i class="icon icon-arrow-down ml2 dim" v-if="tag.skill > 0" @click="tag.skill--"></i>
+                        <i class="icon icon-cross ml2 dim" @click="removeTagListing(index)"></i>
+                    </label>
+                </span>
+            <div>
+            <button class="btn-primary mb4 mt3" v-if="selectedTags.length > 0" @click="searchListing">Search</button>
+                <input type="text" v-model="searchTerm" placeholder="Start typing to search" @keyup.enter="addTagListing(0)">
+                <span class="m1 mv2 dib" v-for="(tag, index) in results">
+                    <label class="chip">
+                        {{tag.name}}
+                        <i class="icon icon-plus ml2" @click="addTagListing(index)"></i>
+                    </label>
+                </span>
+            </div>
+                    
                 </div>
             </div>
         </div>
         <div class="row cf">
         [% with skills=topSkills | tojson %]
-        [% include "chart.html" %]
+            [% include "chart.html" %]
         [% endwith %]
         <h3 class="mt3 pt3">Or, browse our featured students:</h3>
         <div class="row cf" >
@@ -97,7 +114,9 @@ var app = new Vue({
         students: chunkArray([[data | tojson]], 3),
         m: marked,
         selectedTags: [],
+        listingSelectedTags: [],
         searchTerm: '',
+        listingSearchTerm: '',
         tags:  addTagState([[tags | tojson]]),
         skills: [[topSkills | tojson]],
     },
@@ -118,7 +137,24 @@ var app = new Vue({
                 queryString += encodeURIComponent(this.selectedTags[i].name) + '=' + this.selectedTags[i].skill + "&"
             }
             window.location.href = "/search?" + queryString;
-        }
+        },
+        addTagListing: function(i) {
+            if(this.listingSearchTerm.length > 0 && this.listingResults.length > 0){
+                this.listingSelectedTags.sort(function(a, b) { return b.skill - a.skill })
+                this.listingSelectedTags.push(this.listingResults[i])
+            }
+        },
+        removeTagListing: function(i) {
+            this.listingSelectedTags.sort(function(a, b) { return b.skill - a.skill })
+            this.listingSelectedTags.splice(i, 1)
+        },
+        searchListing: function(){
+            queryString = ""
+            for (var i = this.listingSelectedTags.length - 1; i >= 0; i--) {
+                queryString += encodeURIComponent(this.listingSelectedTags[i].name) + '=' + this.listingSelectedTags[i].skill + "&"
+            }
+            window.location.href = "/searchlistings?" + queryString;
+        },
     },
     computed: {
         results: function() {
@@ -126,8 +162,21 @@ var app = new Vue({
             var fuse = new Fuse(this.tags, {keys: ["name"]});
             var arr = fuse.search(this.searchTerm)
             var temp = []
-            for (var i = this.selectedTags.length - 1; i >= 0; i--) { //this bit of code is to avoid adding duplicates.
+            for (var i = this.selectedTags.length - 1; i >= 0; i--) { //avoid adding duplicates.
                 temp.push(this.selectedTags[i].name)
+            }
+            arr = arr.filter(function(val) {
+                return temp.indexOf(val.name) == -1;
+            })
+            return arr
+        },
+        listingResults: function() {
+            var self = this;
+            var fuse = new Fuse(this.tags, {keys: ["name"]});
+            var arr = fuse.search(this.listingSearchTerm)
+            var temp = []
+            for (var i = this.listingSelectedTags.length - 1; i >= 0; i--) { //avoid adding duplicates.
+                temp.push(this.listingSelectedTags[i].name)
             }
             arr = arr.filter(function(val) {
                 return temp.indexOf(val.name) == -1;
