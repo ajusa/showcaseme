@@ -11,7 +11,7 @@
                     <div class="p3">
                         <div class="row cf mb1">
                             <div class="seven columns">
-                                <a :href="'/student/' + student.id"><h4 class="mb1" v-html="m(student.name)"></h4></a>
+                                <a :href="'/' + sType + '/' + student.id"><h4 class="mb1" v-html="m(student.name)"></h4></a>
                             </div>
                             <div class="five columns">
                                 <h5>{{Math.round(student.match*100)}}% match</h5>
@@ -34,7 +34,7 @@
                     <div class="p3">
                         <div class="row cf mb1">
                             <div class="seven columns">
-                                <a :href="'/student/' + student.id"><h4 class="mb1" v-html="m(student.name)"></h4></a>
+                                <a :href="'/' + sType + '/' + student.id"><h4 class="mb1" v-html="m(student.name)"></h4></a>
                             </div>
                             <div class="five columns">
                                 <h5>{{Math.round(student.match*100)}}% match</h5>
@@ -91,6 +91,7 @@ var app = new Vue({
         searchTerm: '',
         tags: addTagState([[tags | tojson]]),
         width: screen.width,
+        sType: [[stype | tojson]]
     },
     methods: {
         addTag: function(i) {

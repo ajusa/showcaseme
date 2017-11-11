@@ -47,9 +47,9 @@
                     </label>
                 </span>
             <div>
-            <button class="btn-primary mb4 mt3" v-if="selectedTags.length > 0" @click="searchListing">Search</button>
-                <input type="text" v-model="searchTerm" placeholder="Start typing to search" @keyup.enter="addTagListing(0)">
-                <span class="m1 mv2 dib" v-for="(tag, index) in results">
+            <button class="btn-primary mb4 mt3" v-if="listingSelectedTags.length > 0" @click="searchListing">Search</button>
+                <input type="text" v-model="listingSearchTerm" placeholder="Start typing to search" @keyup.enter="addTagListing(0)">
+                <span class="m1 mv2 dib" v-for="(tag, index) in listingResults">
                     <label class="chip">
                         {{tag.name}}
                         <i class="icon icon-plus ml2" @click="addTagListing(index)"></i>

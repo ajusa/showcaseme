@@ -80,7 +80,7 @@ def listingSearch(requirements, bonusReqs=[], requirementWeight=1.0, bonusWeight
 			foundListings[listing['id']] = points/maxPoints
 	if limit:
 		foundListings = dict(Counter(foundListings).most_common(limit))
-	print(foundListings)
+	#print(foundListings)
 	return foundListings
 
 def topSkills(limit):

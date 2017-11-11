@@ -152,8 +152,11 @@ def search():
 	foundSorted = list(Counter(found).most_common())
 	#print(request.args)
 	#print([getUserData(user)['profile'] for user in sorted(found, key=found.get, reverse=True) if 'profile' in getUserData(user)])
-	return render_template('search.html', data = [dict(getUserData(user[0])['profile'].items() + {'id': getUserData(user[0])['id']}.items() + 
-		{'match': found[user[0]]}.items()) for user in foundSorted if (getUserData(user[0]) and 'profile' in getUserData(user[0]))], tags = TAGS)
+	return render_template('search.html', data = [dict(getUserData(user[0])['profile'].items() +
+		{'id': getUserData(user[0])['id']}.items() + 
+		{'match': found[user[0]]}.items()) for user in foundSorted if (getUserData(user[0]) and 'profile' in getUserData(user[0]))], 
+		tags = TAGS,
+		stype = 'student')
 
 @app.route("/searchlistings", methods=["GET"])
 def searchListings():
@@ -177,7 +180,8 @@ def searchListings():
 	#print(listings)
 	return render_template('search.html',
 		data = listings,
-		tags = TAGS)
+		tags = TAGS,
+		stype = 'listing')
 
 @app.route('/send-mail/', methods=['GET', 'POST'])
 def send_mail():
