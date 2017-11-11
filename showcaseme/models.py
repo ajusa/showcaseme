@@ -1,4 +1,4 @@
-from showcaseme import users, listings
+from showcaseme import users, listings, TAGS
 from flask_login import UserMixin
 from tinydb import Query
 from collections import Counter, OrderedDict
@@ -23,7 +23,7 @@ class User(UserMixin):
 			self.userType = user_type
 		self.name = getUserData(uid)['name']
 
-#returns a dictionary {userID: matchPercent} where match is a decimal betweeon 0.0 and 1.0, where 1.0 is a perfect match and 0.0 is a total miss. Only returns users that are above a certain threshold
+#returns a dictionary {userID: matchPercent} where match is a decimal between 0.0 and 1.0, where 1.0 is a perfect match and 0.0 is a total miss. Only returns users that are above a certain threshold
 def userSearch(requirements, bonusReqs=[], requirementWeight=1.0, bonusWeight=0.5, threshold=0.3, limit=0): 
 	foundUsers = {}
 	requirements = {key: int(requirements[key]) for key in requirements}
@@ -54,7 +54,7 @@ def userSearch(requirements, bonusReqs=[], requirementWeight=1.0, bonusWeight=0.
 		foundUsers = dict(Counter(foundUsers).most_common(limit))
 	return foundUsers
 
-def listingSearch(requirements, bonusReqs=[], requirementWeight=1.0, bonusWeight=0.5, threshold=0.3, limit=0):
+def listingSearchOld(requirements, bonusReqs=[], requirementWeight=1.0, bonusWeight=0.5, threshold=0.3, limit=0):
 	foundListings = {}
 	requirements = {key: int(requirements[key]) for key in requirements}
 	bonusReqs = {key: int(bonusReqs[key]) for key in bonusReqs}
@@ -65,7 +65,7 @@ def listingSearch(requirements, bonusReqs=[], requirementWeight=1.0, bonusWeight
 			break
 		points = 0.0
 		listingTags = {tag['name']: tag['skill'] for tag in listing['tags']}
-		for tag in listingTags.keys():
+		for tag in listingTags.keys():  #assign points to each listing
 			if tag in requirements:
 				if listingTags[tag] > requirements[tag]:
 					points += requirementWeight * (1+requirements[tag])
@@ -75,13 +75,62 @@ def listingSearch(requirements, bonusReqs=[], requirementWeight=1.0, bonusWeight
 				if listingTags[tag] > bonusReqs[tag]:
 					points += bonusWeight * (1+bonusReqs[tag])
 				else: #listing skill <= required skill
-					points += bonusWeight * (1+listingTags[tag])
+					points += bonusWeight * (1+listingTags[tag])#"""
 		if points/maxPoints >= threshold:
 			foundListings[listing['id']] = points/maxPoints
 	if limit:
 		foundListings = dict(Counter(foundListings).most_common(limit))
 	#print(foundListings)
 	return foundListings
+
+def listingSearch(requirements, bonusReqs=[], requirementWeight=1.0, bonusWeight=0.5, threshold=0.3, limit=0):
+	foundListings = {}
+	requirements = {key: int(requirements[key]) for key in requirements}
+	bonusReqs = {key: int(bonusReqs[key]) for key in bonusReqs}
+	for listing in listings.all():
+		listingTags = {tag['name']: tag['skill'] for tag in listing['tags']}
+		bonusTags = {tag['name']: tag['skill'] for tag in listing['bonus_tags']}
+		maxPoints = maxListingScore(listingTags, bonusTags, requirementWeight=requirementWeight, bonusWeight=bonusWeight)
+		print(listing['title'])
+		print(maxPoints)
+		points = 0
+		for tag in listingTags.keys():
+			if tag in requirements:
+				if listingTags[tag] > requirements[tag]:
+					points += (listingTags[tag] - requirements[tag]) * requirementWeight
+				else: #listing skill <= searched (possessed) skill
+					pass #no penalty
+			else:
+				points += 3 * requirementWeight #maximum number of penalty points
+		for tag in bonusTags.keys():
+			if tag in requirements:
+				if bonusTags[tag] > requirements[tag]:
+					points += (bonusTags[tag] - requirements[tag]) * bonusWeight
+				else: #listing skill <= searched (possessed) skill
+					pass #no penalty
+			else:
+				points += 3 * bonusWeight #maximum number of penalty points
+		print(points)
+		if not maxPoints:
+			continue
+		if ((maxPoints - points)/maxPoints) >= threshold:
+			foundListings[listing['id']] = ((maxPoints - points)/maxPoints)
+		print("\n" + listing['title'])
+		print("{0} - {1}/{0}".format(maxPoints, points))
+		print(((maxPoints - points)/maxPoints))#"""
+	if limit:
+		foundListings = dict(Counter(foundListings).most_common(limit))
+	print(foundListings)
+	return foundListings
+
+def maxListingScore(requirements, bonuses, requirementWeight=1.0, bonusWeight=0.5):
+	maxPoints = 0
+	for tag in requirements.keys():
+		maxPoints += (requirements[tag]+1) * requirementWeight
+	for tag in bonuses.keys():
+		maxPoints += (bonuses[tag]+1) * bonusWeight
+	return maxPoints
+
 
 def topSkills(limit):
 	skills = {}

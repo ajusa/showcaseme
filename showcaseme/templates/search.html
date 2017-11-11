@@ -16,9 +16,18 @@
                             <div class="five columns">
                                 <h5>{{Math.round(student.match*100)}}% match</h5>
                             </div>
-                            <p class="silver twelve columns" v-html="m(student.blurb)"></p>
-                            <div class="twelve columns">
+                            <p class="silver twelve columns mb0" v-html="m(student.blurb)"></p>
+                            <div class="twelve columns mt0">
                                 <span class="m1 mv2 dib" v-for="tag in student.tags.slice().sort(function(a, b){return b.skill - a.skill})">
+                            <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
+                                {{tag.name}} 
+                            </label>
+                        </span>
+                            </div>
+                            <h6 class="near-black twelve columns mt1 mb0" v-if="student.bonus_tags && student.bonus_tags.length > 0">
+                            Bonus skills</h6>                          
+                            <div class="twelve columns mt0" v-if="student.bonus_tags && student.bonus_tags.length > 0">
+                                <span class="m1 mv2 dib" v-for="tag in student.bonus_tags.slice().sort(function(a, b){return b.skill - a.skill})">
                             <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
                                 {{tag.name}} 
                             </label>
