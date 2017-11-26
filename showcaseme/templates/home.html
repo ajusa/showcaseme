@@ -64,22 +64,59 @@
         [% with skills=topSkills | tojson %]
             [% include "chart.html" %]
         [% endwith %]
-        <h3 class="mt3 pt3">Or, browse our featured students:</h3>
-        <div class="row cf" >
-            <div class="four columns" v-for="column in students">
-                <div class="card  mv3" v-for="student in column">
-                    <div class="p3">
-                        <a :href="'/student/' + student.id"><h4 class="mb1" v-html="m(student.name)"></h4></a>
-                        <p class="silver" v-html="m(student.blurb)"></p>
-                        <span class="m1 mv2 dib" v-for="tag in student.tags.slice().sort(function(a, b){return b.skill - a.skill})">
-                            <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
-                                {{tag.name}}
-                            </label>
-                        </span>
+        [% if current_user.is_authenticated and current_user.userType == 'student' %]
+            <h3 class="mt3 pt3">Positions for you:</h3>   
+            <div class="row cf">
+                <div class="four columns" v-for="column in students">
+                    <div class="card mv3" v-for="student in column" v-bind:style="'background-color:' + getColor(student.match)" >
+                        <div class="p3">
+                            <div class="row cf mb1">
+                                <div class="seven columns">
+                                    <a :href="'/' + sType + '/' + student.id"><h4 class="mb1" v-html="m(student.name)"></h4></a>
+                                </div>
+                                <div class="five columns">
+                                    <h5>{{Math.round(student.match*100)}}% match</h5>
+                                </div>
+                                <p class="silver twelve columns mb0" v-html="m(student.blurb)"></p>
+                                <div class="twelve columns mt0">
+                                    <span class="m1 mv2 dib" v-for="tag in student.tags.slice().sort(function(a, b){return b.skill - a.skill})">
+                                <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
+                                    {{tag.name}} 
+                                </label>
+                            </span>
+                                </div>
+                                <h6 class="near-black twelve columns mt1 mb0" v-if="student.bonus_tags && student.bonus_tags.length > 0">
+                                Bonus skills</h6>                          
+                                <div class="twelve columns mt0" v-if="student.bonus_tags && student.bonus_tags.length > 0">
+                                    <span class="m1 mv2 dib" v-for="tag in student.bonus_tags.slice().sort(function(a, b){return b.skill - a.skill})">
+                                <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
+                                    {{tag.name}} 
+                                </label>
+                            </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>       
+        [% else %]
+            <h3 class="mt3 pt3">Browse our featured students:</h3>
+            <div class="row cf" >
+                <div class="four columns" v-for="column in students">
+                    <div class="card  mv3" v-for="student in column">
+                        <div class="p3">
+                            <a :href="'/' + sType + '/' + student.id"><h4 class="mb1" v-html="m(student.name)"></h4></a>
+                            <p class="silver" v-html="m(student.blurb)"></p>
+                            <span class="m1 mv2 dib" v-for="tag in student.tags.slice().sort(function(a, b){return b.skill - a.skill})">
+                                <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
+                                    {{tag.name}}
+                                </label>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        [% endif %]
     </div>
 </div>
 [% include 'footer.html' %]
@@ -119,6 +156,7 @@ var app = new Vue({
         listingSearchTerm: '',
         tags:  addTagState([[tags | tojson]]),
         skills: [[topSkills | tojson]],
+        sType: [[stype | tojson]]
     },
     methods:{
         addTag: function(i) {
@@ -154,6 +192,11 @@ var app = new Vue({
                 queryString += encodeURIComponent(this.listingSelectedTags[i].name) + '=' + this.listingSelectedTags[i].skill + "&"
             }
             window.location.href = "/searchlistings?" + queryString;
+        },
+        getColor: function(value) {
+            //value from 0 to 1
+            var hue = (((value - 0.3) / 0.7) * 120).toString(10);
+            return ["hsl(", hue, ",100%,90%)"].join("");
         },
     },
     computed: {

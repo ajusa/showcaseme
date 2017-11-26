@@ -18,7 +18,7 @@
                         <i class="icon icon-cross ml2 dim" v-if="edit" @click="removeTag(index)"></i>
                     </label>
                 </span>
-                    <h5 class="mb1">Bonus Skills</h5>
+                    <h5 class="mb1" v-if="listing.bonus_tags.length > 0">Bonus Skills</h5>
                     <span class="m1 mv2 dib" v-for="(tag, index) in listing.bonus_tags.slice().sort(function(a, b){return b.skill - a.skill})">
                     <label class="chip mv2" v-bind:class="{ active: tag.skill == 2, 'bg-yellow black' : tag.skill == 1 }">
                         {{tag.name}}
@@ -141,8 +141,9 @@ var app = new Vue({
             this.listing.id = this.id
             app.$http.post('/listing', this.listing).then(function(resp) {
                 swal("", "Listing has been saved!", "success")
+                window.location.href = "/listing/"+ this.id;
             });
-            window.location.href = "/listing/"+ this.id;
+            
         },
         addTag: function(i) {
             this.listing.tags.sort(function(a, b) { return b.skill - a.skill })

@@ -25,9 +25,18 @@
             </div>
             <button class="btn-primary mv3 w-100" v-if="edit" @click="user.projects.push(JSON.parse(JSON.stringify(exampleProj)))">Add Project</button>
             [% endif %]
-            [% if current_user.is_authenticated and current_user.id == id %]
-            <button class="btn-primary mt2" v-if="edit" @click="saveProfile">Save Profile</button>
-            <button class="btn-primary mt2" v-else @click="edit = true">Edit Profile</button>
+                [% if current_user.is_authenticated and current_user.id == id %]
+                <button class="btn-primary mt2" v-if="edit" @click="saveProfile">Save Profile</button>
+                <button class="btn-primary mt2" v-else @click="edit = true">Edit Profile</button>
+                [% if userType == 'company' %]
+                    <div>
+                        <a href="/listing">
+                            <button class="btn-primary mt2">
+                                <i class="icon icon-plus"></i> &nbsp; Add listing
+                            </button>
+                        </a>
+                    </div>
+                [% endif %]
             [% endif %]
         </div>
         <div class="five columns mt2">

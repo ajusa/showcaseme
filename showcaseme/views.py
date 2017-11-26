@@ -17,13 +17,31 @@ def usertype_required(f):
 @app.route('/')
 def home():
 	temp = []
-	for item in users.all():
-		if 'profile' in item:
-			item['profile']['id'] = item['id']
-			temp.append(item['profile'])
-	print(topSkills(5))
-	return render_template('home.html', data=temp, tags = TAGS, topSkills = topSkills(10))
+	if current_user.is_authenticated and current_user.userType == 'student':
+		stype = 'listing'
+		userTags = getUserData(current_user.id)['profile']['tags']
+		print(userTags)
+		userArgs = {tag['name']: tag['skill'] for tag in userTags}
+		print(userArgs)
+		found = listingSearch(userArgs, threshold = 0.7, limit = 9)
+		foundSorted = list(Counter(found).most_common())
+		for listing in foundSorted:
+			if not getListingData(listing[0]):
+				continue
+			listingData = getListingData(listing[0])
+			listingData['id'] = listingData['id']
+			listingData['match'] = found[listing[0]]
+			listingData['name'] = listingData['title']
+			temp.append(listingData)
+	else:
+		stype = 'student'
+		for item in users.all():
+			if 'profile' in item:
+				item['profile']['id'] = item['id']
+				temp.append(item['profile'])
+	return render_template('home.html', data=temp, tags = TAGS, topSkills = topSkills(10), stype = stype)
 @app.route('/student/<id>')
+@app.route('/company/<id>')
 def viewUser(id):
 	user = getUserData(id)
 	if ('profile' in user and user['userType']):
@@ -52,7 +70,7 @@ def listing(id=False):
 		#print(len(listing) == 0)
 		update = updateListing(rawListing, q)
 		update.next()
-		print(update)
+		#print(update)
 		#listings.update(rawListing, q.id == rawListing['id'])	
 		return jsonify(result='ok')
 
@@ -62,13 +80,16 @@ def listing(id=False):
 		listingId = str(uuid.uuid4())
 		url = addListing(listingId)
 		url.next()
-		print("oogah")
+		#print("oogah")
 		return url.next()
 
-def addListing(listingId):
+def addListing(listingId, user=None):
 	rawListing=DEFAULT_LISTING
 	rawListing['id'] =  listingId
-	rawListing['user'] = current_user.id
+	if not user:
+		rawListing['user'] = current_user.id
+	else:
+		rawListing['user'] = user
 	listing = listings.all()
 	yield listings.insert(rawListing)
 	yield redirect("/listing/"+listingId)
@@ -160,12 +181,9 @@ def search():
 
 @app.route("/searchlistings", methods=["GET"])
 def searchListings():
+	print(request.args)
 	found = listingSearch(request.args)
 	foundSorted = list(Counter(found).most_common())
-	#print(request.args)
-	"""print ("foundSorted:", foundSorted)
-	print("first listing:", foundSorted[0][0])
-	print([type(listing[0]) for listing in foundSorted])#"""
 	listings = []
 	for listing in foundSorted:
 		if not getListingData(listing[0]):
@@ -175,9 +193,6 @@ def searchListings():
 		listingData['match'] = found[listing[0]]
 		listingData['name'] = listingData['title']
 		listings.append(listingData)
-		#print("\n" + str(listingData))
-	#print("\n\n\n\n\n")
-	#print(listings)
 	return render_template('search.html',
 		data = listings,
 		tags = TAGS,
